@@ -1,0 +1,265 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 26px; font-weight: 750; letter-spacing: -0.02em;">Welcome back, <%= user.first_name || 'Staff' %> 👋</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Employee Workspace & CRM Dashboard</div>
+  </div>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <a href="/employee/leads" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #000; color: #fff; border-radius: 8px; font-size: 12px; font-weight: 600;">
+      <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+      <span>Add Lead</span>
+    </a>
+    <a href="/employee/clients" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #fff; color: #000; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; font-weight: 600;">
+      <i data-lucide="building-2" style="width: 14px; height: 14px;"></i>
+      <span>Find Clients</span>
+    </a>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="erp-grid-4" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+  <!-- Clients Card -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 20px; border-radius: 12px;">
+    <div class="erp-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #64748B;">Total Clients</div>
+      <div style="width: 36px; height: 36px; border-radius: 8px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="building-2" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <div class="erp-card-value" style="font-size: 28px; font-weight: 750; color: #000000;"><%= clientStats.total %></div>
+    <div style="font-size: 12px; color: #64748B; margin-top: 6px;">
+      <span style="color: #000; font-weight: 600;"><%= clientStats.partner %></span> Partners • <span style="color: #000; font-weight: 600;"><%= clientStats.prospect %></span> Prospects
+    </div>
+  </div>
+
+  <!-- Active Leads Card -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 20px; border-radius: 12px;">
+    <div class="erp-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #64748B;">Leads Pipeline</div>
+      <div style="width: 36px; height: 36px; border-radius: 8px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="target" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <div class="erp-card-value" style="font-size: 28px; font-weight: 750; color: #000000;"><%= pipelineStats.totalDeals %> Deals</div>
+    <div style="font-size: 12px; color: #64748B; margin-top: 6px;">
+      Pipeline: <span style="color: #000; font-weight: 600;">₹<%= pipelineStats.totalPipelineValue.toLocaleString('en-IN') %></span>
+    </div>
+  </div>
+
+  <!-- Today's Follow-ups Card -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 20px; border-radius: 12px;">
+    <div class="erp-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #64748B;">Today's Follow-ups</div>
+      <div style="width: 36px; height: 36px; border-radius: 8px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="phone-call" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <div class="erp-card-value" style="font-size: 28px; font-weight: 750; color: #000000;"><%= followUpStats.today %></div>
+    <div style="font-size: 12px; color: #64748B; margin-top: 6px;">
+      <span style="color: #000; font-weight: 600;"><%= followUpStats.completed %></span> completed • <%= followUpStats.overdue %> overdue
+    </div>
+  </div>
+
+  <!-- Performance Card -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 20px; border-radius: 12px;">
+    <div class="erp-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #64748B;">Monthly Target Score</div>
+      <div style="width: 36px; height: 36px; border-radius: 8px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="award" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <div class="erp-card-value" style="font-size: 28px; font-weight: 750; color: #000000;"><%= performance.overallScore %>%</div>
+    <div style="font-size: 12px; color: #64748B; margin-top: 6px;">
+      Rating: <span style="color: #000; font-weight: 600;">★ <%= performance.rating %>/5.0</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 32px;">
+
+  <!-- Left Column: Today's Follow-up Schedule -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 24px; border-radius: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #E2E8F0;">
+      <div>
+        <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #000;">Today's Follow-ups & Calls</h3>
+        <p style="font-size: 12px; color: #64748B; margin: 2px 0 0 0;">Prioritized customer touches and meetings</p>
+      </div>
+      <a href="/employee/follow-ups" style="font-size: 12px; font-weight: 600; color: #000; text-decoration: underline;">View All &rarr;</a>
+    </div>
+
+    <% if (todayFollowUps && todayFollowUps.length > 0) { %>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <% todayFollowUps.forEach(f => { %>
+          <% if (f.status === 'completed') { %>
+            <div style="border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+          <% } else { %>
+            <div style="border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+          <% } %>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <% if (f.type === 'phone_call') { %>
+                  <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
+                <% } else if (f.type === 'video_meeting') { %>
+                  <i data-lucide="video" style="width: 16px; height: 16px;"></i>
+                <% } else { %>
+                  <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+                <% } %>
+              </div>
+              <div>
+                <div style="font-size: 13px; font-weight: 650; color: #000;"><%= f.title %></div>
+                <div style="font-size: 11px; color: #64748B; margin-top: 2px;">
+                  <%= f.lead_company || f.client_company || 'Client' %> &bull; <%= new Date(f.scheduled_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+              </div>
+            </div>
+            <div>
+              <% if (f.status === 'completed') { %>
+                <span style="font-size: 11px; padding: 4px 8px; background: #F1F5F9; color: #000; border-radius: 6px; font-weight: 600;">Done ✓</span>
+              <% } else { %>
+                <button type="button" data-id="<%= f.id %>" onclick="handleQuickCompleteFollowup(this)" class="erp-btn erp-btn-sm" style="padding: 4px 10px; font-size: 11px; font-weight: 600; background: #000; color: #fff; border-radius: 6px; border: none; cursor: pointer;">
+                  Complete
+                </button>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div style="padding: 32px 16px; text-align: center; color: #64748B; background: #F8FAFC; border-radius: 8px;">
+        <i data-lucide="check-circle" style="width: 28px; height: 28px; margin: 0 auto 8px auto; color: #CBD5E1;"></i>
+        <div style="font-size: 13px; font-weight: 600;">No pending follow-ups for today</div>
+        <a href="/employee/follow-ups" style="display: inline-block; margin-top: 8px; font-size: 12px; color: #000; font-weight: 600; text-decoration: underline;">Schedule a call</a>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Right Column: Priority Tasks -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 24px; border-radius: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #E2E8F0;">
+      <div>
+        <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #000;">My Priority Tasks</h3>
+        <p style="font-size: 12px; color: #64748B; margin: 2px 0 0 0;"><%= taskStats.pending %> active tasks pending completion</p>
+      </div>
+      <a href="/employee/tasks" style="font-size: 12px; font-weight: 600; color: #000; text-decoration: underline;">View All &rarr;</a>
+    </div>
+
+    <% if (pendingTasks && pendingTasks.length > 0) { %>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <% pendingTasks.forEach(t => { %>
+          <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox" data-id="<%= t.id %>" onchange="handleToggleTask(this)" style="cursor: pointer; accent-color: #000; width: 16px; height: 16px;">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: #000;"><%= t.title %></div>
+                <div style="font-size: 11px; color: #64748B;">
+                  Due: <%= t.due_date || 'No due date' %> &bull; <span style="text-transform: capitalize; font-weight: 600;"><%= t.priority %> Priority</span>
+                </div>
+              </div>
+            </div>
+            <span style="font-size: 10px; padding: 3px 6px; background: #F1F5F9; border-radius: 4px; font-weight: 600; text-transform: uppercase;"><%= t.category %></span>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div style="padding: 32px 16px; text-align: center; color: #64748B; background: #F8FAFC; border-radius: 8px;">
+        <i data-lucide="check-square" style="width: 28px; height: 28px; margin: 0 auto 8px auto; color: #CBD5E1;"></i>
+        <div style="font-size: 13px; font-weight: 600;">All tasks completed! Great job.</div>
+        <a href="/employee/tasks" style="display: inline-block; margin-top: 8px; font-size: 12px; color: #000; font-weight: 600; text-decoration: underline;">Create a task</a>
+      </div>
+    <% } %>
+  </div>
+
+</div>
+
+<!-- Pipeline Stage Progress Bar -->
+<div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div>
+      <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #000;">Sales & Corporate Training Pipeline</h3>
+      <p style="font-size: 12px; color: #64748B; margin: 2px 0 0 0;">Live status across deals and corporate batches</p>
+    </div>
+    <a href="/employee/leads" style="font-size: 12px; font-weight: 600; color: #000; text-decoration: underline;">Open Kanban Board &rarr;</a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
+    <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; text-align: center; background: #F8FAFC;">
+      <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">1. New</div>
+      <div style="font-size: 20px; font-weight: 750; color: #000; margin: 4px 0;"><%= pipelineStats.stages.new.count %></div>
+      <div style="font-size: 11px; color: #64748B;">₹<%= pipelineStats.stages.new.value.toLocaleString('en-IN') %></div>
+    </div>
+    <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; text-align: center; background: #F8FAFC;">
+      <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">2. Contacted</div>
+      <div style="font-size: 20px; font-weight: 750; color: #000; margin: 4px 0;"><%= pipelineStats.stages.contacted.count %></div>
+      <div style="font-size: 11px; color: #64748B;">₹<%= pipelineStats.stages.contacted.value.toLocaleString('en-IN') %></div>
+    </div>
+    <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; text-align: center; background: #F8FAFC;">
+      <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">3. Discussion</div>
+      <div style="font-size: 20px; font-weight: 750; color: #000; margin: 4px 0;"><%= pipelineStats.stages.discussion.count %></div>
+      <div style="font-size: 11px; color: #64748B;">₹<%= pipelineStats.stages.discussion.value.toLocaleString('en-IN') %></div>
+    </div>
+    <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; text-align: center; background: #F8FAFC;">
+      <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">4. Proposal</div>
+      <div style="font-size: 20px; font-weight: 750; color: #000; margin: 4px 0;"><%= pipelineStats.stages.proposal.count %></div>
+      <div style="font-size: 11px; color: #64748B;">₹<%= pipelineStats.stages.proposal.value.toLocaleString('en-IN') %></div>
+    </div>
+    <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; text-align: center; background: #000; color: #fff;">
+      <div style="font-size: 11px; font-weight: 600; color: #CBD5E1; text-transform: uppercase;">5. Won</div>
+      <div style="font-size: 20px; font-weight: 750; color: #fff; margin: 4px 0;"><%= pipelineStats.stages.won.count %></div>
+      <div style="font-size: 11px; color: #94A3B8;">₹<%= pipelineStats.stages.won.value.toLocaleString('en-IN') %></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleQuickCompleteFollowup(btn) {
+    if (btn && btn.dataset && btn.dataset.id) {
+      quickCompleteFollowUp(btn.dataset.id);
+    }
+  }
+
+  function handleToggleTask(checkbox) {
+    if (checkbox && checkbox.dataset && checkbox.dataset.id) {
+      toggleTaskDone(checkbox.dataset.id, checkbox);
+    }
+  }
+
+  async function quickCompleteFollowUp(id) {
+    if (!confirm('Mark this follow-up call as completed?')) return;
+    try {
+      const res = await fetch(`/api/employee/follow-ups/${id}/complete`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ outcome: 'interested', notes: 'Completed via quick dashboard action' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.message || 'Failed to update follow-up');
+      }
+    } catch (e) {
+      alert('Error updating follow-up');
+    }
+  }
+
+  async function toggleTaskDone(id, checkbox) {
+    if (!checkbox.checked) return;
+    try {
+      const res = await fetch(`/api/employee/tasks/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'completed' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        checkbox.checked = false;
+        alert(data.message || 'Failed to update task');
+      }
+    } catch (e) {
+      checkbox.checked = false;
+      alert('Error updating task');
+    }
+  }
+</script>

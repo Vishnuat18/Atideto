@@ -1,0 +1,43 @@
+<div class="erp-h1" style="margin-bottom: 24px; color: #000000;">
+  <div style="font-size: 26px; font-weight: 750;">Administrator Profile</div>
+  <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Super admin credentials, permissions, and security settings</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 32px;">
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px;">
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+      <div style="width: 56px; height: 56px; border-radius: 12px; background: #000; color: #fff; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center;">
+        <%= (user.first_name || 'A').charAt(0).toUpperCase() %>
+      </div>
+      <div>
+        <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;"><%= user.first_name %> <%= user.last_name %></h3>
+        <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; background: #000; color: #fff; border-radius: 4px; text-transform: uppercase;">
+          <%= user.role || 'Super Admin' %>
+        </span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+      <div>
+        <span style="color: #64748B; font-weight: 500; display: block; font-size: 11px;">EMAIL ADDRESS</span>
+        <span style="font-weight: 600; color: #000;"><%= user.email %></span>
+      </div>
+      <div>
+        <span style="color: #64748B; font-weight: 500; display: block; font-size: 11px;">ACCESS LEVEL</span>
+        <span style="font-weight: 600; color: #000;">Full System Administrative Control</span>
+      </div>
+      <div>
+        <span style="color: #64748B; font-weight: 500; display: block; font-size: 11px;">STATUS</span>
+        <span style="font-weight: 600; color: #000;">Active & Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px;">
+    <h3 style="font-size: 16px; font-weight: 750; color: #000; margin: 0 0 16px 0;">Security & Passwords</h3>
+    <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">Two-factor authentication and master administrative token controls.</p>
+    <div style="font-size: 12px; padding: 12px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0; color: #334155;">
+      Admin session secured via HTTP-only JWT token with 7-day expiration.
+    </div>
+  </div>
+</div>

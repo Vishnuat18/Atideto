@@ -1,0 +1,164 @@
+<%
+  var currentGen = typeof currentGenerator !== 'undefined' ? currentGenerator : '';
+  
+  var navItems = [
+    { key: 'certificate', label: 'Certificate',  icon: 'award',           href: '/admin/generators/certificate' },
+    { key: 'offerletter', label: 'Offer Letter', icon: 'file-text',       href: '/admin/generators/offer-letter' },
+    { key: 'attendance',  label: 'Attendance',   icon: 'calendar-check',  href: '/admin/generators/attendance' },
+    { key: 'project',     label: 'Project',      icon: 'briefcase',       href: '/admin/generators/project' }
+  ];
+%>
+<style>
+  .gen-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--erp-bg);
+    border: var(--erp-border-width) solid var(--erp-border);
+    border-radius: var(--erp-radius);
+    padding: 5px 10px;
+    box-shadow: var(--erp-shadow-subtle);
+  }
+  .gen-nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    margin-right: 6px;
+    flex-shrink: 0;
+    padding-right: 10px;
+    border-right: 1px solid var(--erp-divider);
+  }
+  .gen-nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+  }
+  .gen-nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 13px;
+    border-radius: var(--erp-radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--erp-transition);
+    font-family: var(--erp-font);
+    white-space: nowrap;
+  }
+  .gen-nav-tab:hover {
+    background: var(--erp-hover);
+    color: var(--erp-text-primary);
+  }
+  .gen-nav-tab.active {
+    background: #000000;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  .gen-nav-tab:not(.active) {
+    color: var(--erp-text-secondary);
+  }
+  .gen-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+    padding-left: 10px;
+    border-left: 1px solid var(--erp-divider);
+  }
+  .gen-nav-action {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: var(--erp-radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--erp-transition);
+    font-family: var(--erp-font);
+    white-space: nowrap;
+  }
+  .gen-nav-action.primary {
+    color: var(--erp-primary);
+    background: var(--erp-primary-light);
+    border: 1px solid var(--erp-primary);
+  }
+  .gen-nav-action.primary:hover {
+    background: var(--erp-primary);
+    color: #fff;
+  }
+  .gen-nav-action.secondary {
+    color: var(--erp-text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .gen-nav-action.secondary:hover {
+    background: var(--erp-hover);
+    color: var(--erp-text-primary);
+  }
+  @media (max-width: 768px) {
+    .gen-nav {
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 6px 8px;
+    }
+    .gen-nav-logo {
+      border-right: none;
+      padding-right: 0;
+      margin-right: 0;
+    }
+    .gen-nav-logo img { height: 40px; }
+    .gen-nav-tabs {
+      flex-wrap: wrap;
+      gap: 2px;
+    }
+    .gen-nav-tab {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+    .gen-nav-tab span { display: none; }
+    .gen-nav-right {
+      width: 100%;
+      justify-content: center;
+      border-left: none;
+      padding-left: 0;
+      margin-left: 0;
+      padding-top: 6px;
+      border-top: 1px solid var(--erp-divider);
+    }
+  }
+</style>
+
+<nav class="gen-nav">
+  <!-- Logo -->
+  <a href="/admin/dashboard" class="gen-nav-logo">
+    <img src="/erp-assets/assets/logo/logo-dark.png" alt="ATIDETO" style="height: 56px; width: auto; object-fit: contain;">
+  </a>
+
+  <!-- Generator Tabs -->
+  <div class="gen-nav-tabs">
+    <% navItems.forEach(function(item) { %>
+      <a href="<%= item.href %>" class="gen-nav-tab <%= currentGen === item.key ? 'active' : '' %>">
+        <i data-lucide="<%= item.icon %>" style="width: 14px; height: 14px;"></i>
+        <span><%= item.label %></span>
+      </a>
+    <% }) %>
+  </div>
+
+  <!-- Right Side Actions -->
+  <div class="gen-nav-right">
+    <a href="/admin/generators/certificate" class="gen-nav-action primary">
+      <i data-lucide="award" style="width: 12px; height: 12px;"></i>
+      Issue Certificate
+    </a>
+    <a href="/admin/dashboard" class="gen-nav-action secondary">
+      <i data-lucide="layout-dashboard" style="width: 12px; height: 12px;"></i>
+      Admin
+    </a>
+  </div>
+</nav>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Atideto Technologies ERP - Admin Dashboard</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Atideto Technologies ERP Admin">
+  <meta property="og:title" content="Atideto Technologies ERP - Admin Dashboard">
+  <meta property="og:description" content="Manage students, courses, registrations, and payments on the Atideto Technologies Admin Dashboard.">
+  <meta property="og:url" content="<%= org.website %><%= currentPath %>">
+  <meta property="og:image" content="<%= org.website %>/assets/hero/home_light.png">
+  <meta property="og:image:alt" content="Atideto Technologies ERP Admin Dashboard">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Atideto Technologies ERP - Admin Dashboard">
+  <meta name="twitter:description" content="Manage students, courses, registrations, and payments on the Atideto Technologies Admin Dashboard.">
+
+  <!-- SEO -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#155EEF">
+
+  <!-- Google Fonts: Montserrat (unified brand font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+          colors: {
+            primary: { DEFAULT: '#155EEF', light: '#3B82F6', dark: '#0F4EBB' },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Chart.js for Admin Dashboards -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/erp-assets/css/erp-theme.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/erp-assets/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/erp-assets/assets/logo/logo-dark.png">
+
+  <%- style %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@1,6..72,400..700&display=swap" rel="stylesheet">
+  <style>h1,h2,h3,h4,h5,h6,.font-heading{font-family:"Manrope",sans-serif!important;}body,p,span,input,select,button,table{font-family:"Inter",sans-serif;}</style>
+</head>
+<body class="erp-body">
+
+  <!-- Skip to content (accessibility) -->
+  <a href="#admin-main-content" style="position:absolute;top:-100%;left:16px;z-index:99999;padding:12px 24px;background:#000;color:#fff;font-weight:600;font-size:14px;border-radius:0 0 8px 8px;text-decoration:none;transition:top 0.2s ease;" onfocus="this.style.top='0'" onblur="this.style.top='-100%'">
+    Skip to main content
+  </a>
+
+  <!-- Sidebar Overlay (mobile) — must be OUTSIDE .erp-layout for proper z-index -->
+  <div class="erp-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="erp-layout">
+    <!-- Sidebar -->
+    <aside class="erp-sidebar" id="admin-sidebar">
+      <script>
+        // Inline script to prevent sidebar layout flash
+        if (localStorage.getItem('sidebar-collapsed') === 'true') {
+          document.getElementById('admin-sidebar').classList.add('collapsed');
+        }
+      </script>
+      <div class="erp-sidebar-header">
+        <div class="sidebar-logo-container">
+          <img src="/erp-assets/assets/logo/logo-dark.png" alt="ATIDETO Logo" class="sidebar-logo-large" style="height: 64px; max-height: 68px; width: auto; max-width: 220px; object-fit: contain;">
+        </div>
+        <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" title="Toggle Sidebar">
+          <i id="sidebar-toggle-icon" data-lucide="panel-left-close" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <nav class="erp-sidebar-nav">
+        <a href="/admin/dashboard" class="erp-nav-item <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        
+        <!-- Categorized: EMPLOYEE -->
+        <div class="erp-nav-section" style="display: flex; align-items: center; justify-content: space-between;">
+          <span>Employee</span>
+          <span style="font-size: 10px; font-weight: 700; padding: 1px 6px; background: #000; color: #fff; border-radius: 4px; letter-spacing: 0.05em;">CRM</span>
+        </div>
+        <a href="/admin/users" class="erp-nav-item <%= (currentPath.startsWith('/admin/users') || currentPath.startsWith('/admin/employees')) ? 'active' : '' %>">
+          <i data-lucide="users-round"></i>
+          <span>Staff Directory</span>
+        </a>
+        <a href="/admin/clients" class="erp-nav-item <%= currentPath.startsWith('/admin/clients') ? 'active' : '' %>">
+          <i data-lucide="building-2"></i>
+          <span>Find Clients</span>
+        </a>
+        <a href="/admin/leads" class="erp-nav-item <%= currentPath.startsWith('/admin/leads') ? 'active' : '' %>">
+          <i data-lucide="target"></i>
+          <span>Manage Leads</span>
+        </a>
+        <a href="/admin/follow-ups" class="erp-nav-item <%= (currentPath.startsWith('/admin/follow-ups') || currentPath.startsWith('/admin/followups')) ? 'active' : '' %>">
+          <i data-lucide="phone-call"></i>
+          <span>Follow-ups</span>
+        </a>
+        <a href="/admin/tasks" class="erp-nav-item <%= currentPath.startsWith('/admin/tasks') ? 'active' : '' %>">
+          <i data-lucide="check-square"></i>
+          <span>Employee Tasks</span>
+        </a>
+        <a href="/admin/performance" class="erp-nav-item <%= currentPath.startsWith('/admin/performance') ? 'active' : '' %>">
+          <i data-lucide="trending-up"></i>
+          <span>Performance & KPIs</span>
+        </a>
+
+        <!-- Categorized: STUDENTS -->
+        <div class="erp-nav-section">Students</div>
+        <a href="/admin/students" class="erp-nav-item <%= currentPath.startsWith('/admin/students') ? 'active' : '' %>">
+          <i data-lucide="graduation-cap"></i>
+          <span>All Students</span>
+        </a>
+        <a href="/admin/registrations" class="erp-nav-item <%= currentPath.startsWith('/admin/registrations') ? 'active' : '' %>">
+          <i data-lucide="clipboard-list"></i>
+          <span>Registrations</span>
+        </a>
+        <a href="/admin/courses" class="erp-nav-item <%= currentPath.startsWith('/admin/courses') ? 'active' : '' %>">
+          <i data-lucide="book-open"></i>
+          <span>Courses</span>
+        </a>
+        <a href="/admin/generators/attendance" class="erp-nav-item <%= currentPath.startsWith('/admin/generators/attendance') ? 'active' : '' %>">
+          <i data-lucide="calendar-check"></i>
+          <span>Attendance</span>
+        </a>
+        <a href="/admin/generators/project" class="erp-nav-item <%= currentPath.startsWith('/admin/generators/project') ? 'active' : '' %>">
+          <i data-lucide="briefcase"></i>
+          <span>Projects</span>
+        </a>
+
+        <!-- Categorized: CERTIFICATES -->
+        <div class="erp-nav-section">Certificates</div>
+        <a href="/admin/generators/certificate" class="erp-nav-item <%= currentPath.startsWith('/admin/generators/certificate') ? 'active' : '' %>">
+          <i data-lucide="award"></i>
+          <span>Certificates</span>
+        </a>
+        <a href="/admin/generators/offer-letter" class="erp-nav-item <%= currentPath.startsWith('/admin/generators/offer-letter') ? 'active' : '' %>">
+          <i data-lucide="file-text"></i>
+          <span>Offer Letters</span>
+        </a>
+
+        <!-- Categorized: FINANCE -->
+        <div class="erp-nav-section">Finance</div>
+        <a href="/admin/payments" class="erp-nav-item <%= currentPath.startsWith('/admin/payments') ? 'active' : '' %>">
+          <i data-lucide="wallet"></i>
+          <span>Payments</span>
+        </a>
+
+        <% 
+          const adminUser = typeof user !== 'undefined' && user ? user : (typeof locals !== 'undefined' && locals.user ? locals.user : { first_name: 'Admin', last_name: 'User', role: 'admin', email: 'admin@atideto.com' });
+        %>
+
+        <!-- Categorized: SETTINGS -->
+        <% if (adminUser && (adminUser.role === 'admin' || adminUser.role === 'super_admin')) { %>
+          <div class="erp-nav-section">Settings</div>
+          <a href="/admin/settings" class="erp-nav-item <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/settings')) ? 'active' : '' %>">
+            <i data-lucide="settings"></i>
+            <span>System Settings</span>
+          </a>
+          <a href="/admin/profile" class="erp-nav-item <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/profile')) ? 'active' : '' %>">
+            <i data-lucide="user-circle"></i>
+            <span>Admin Profile</span>
+          </a>
+        <% } %>
+      </nav>
+
+      <div style="padding: 20px 14px; border-top: 1px solid #E2E8F0;">
+        <form action="/api/auth/logout" method="POST">
+          <button type="submit" class="erp-nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;">
+            <i data-lucide="log-out"></i>
+            <span>Logout</span>
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="erp-main" id="admin-main-content" role="main" aria-label="Admin dashboard content">
+      <!-- Topbar -->
+      <header class="erp-topbar">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="erp-mobile-toggle" id="admin-mobile-toggle" aria-label="Open menu">
+            <i data-lucide="menu" style="width: 22px; height: 22px;"></i>
+          </button>
+          <div class="erp-breadcrumb">
+            <span style="color: var(--erp-text-secondary);">Admin</span>
+            <i data-lucide="chevron-right" style="width: 14px; height: 14px; color: var(--erp-text-secondary);"></i>
+            <span class="erp-breadcrumb-active"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Overview' %></span>
+          </div>
+        </div>
+
+        <div class="erp-topbar-right">
+          <button style="background: transparent; border: none; cursor: pointer; color: var(--erp-text-secondary);">
+            <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
+          </button>
+          
+          <div class="erp-profile">
+            <div style="display: flex; flex-direction: column; text-align: right;">
+              <span style="font-size: 13px; font-weight: 600;"><%= adminUser.first_name || 'Admin' %> <%= adminUser.last_name || '' %></span>
+              <span style="font-size: 11px; color: var(--erp-text-secondary); text-transform: capitalize;"><%= adminUser.role || 'Admin' %></span>
+            </div>
+            <div class="erp-avatar">
+              <%= (adminUser.first_name || 'A').charAt(0).toUpperCase() %>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="erp-content<%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/generators')) ? ' erp-content-full' : '' %>">
+        <%- body %>
+      </div>
+
+      <!-- ERP Mobile Bottom Navigation Bar -->
+      <nav class="erp-bottom-nav" aria-label="Mobile Navigation">
+        <a href="/admin/dashboard" class="erp-bottom-nav-item <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Overview</span>
+        </a>
+        <a href="/admin/registrations" class="erp-bottom-nav-item <%= currentPath.startsWith('/admin/registrations') ? 'active' : '' %>">
+          <i data-lucide="clipboard-list"></i>
+          <span>Registrations</span>
+        </a>
+        <a href="/admin/students" class="erp-bottom-nav-item <%= currentPath.startsWith('/admin/students') ? 'active' : '' %>">
+          <i data-lucide="users"></i>
+          <span>Students</span>
+        </a>
+        <a href="/admin/courses" class="erp-bottom-nav-item <%= currentPath.startsWith('/admin/courses') ? 'active' : '' %>">
+          <i data-lucide="book-open"></i>
+          <span>Courses</span>
+        </a>
+        <button type="button" class="erp-bottom-nav-item" id="admin-bottom-menu-btn">
+          <i data-lucide="menu"></i>
+          <span>Menu</span>
+        </button>
+      </nav>
+    </main>
+  </div>
+
+  <script>
+    // Initialize all Lucide Icons
+    lucide.createIcons();
+
+    // Sidebar Toggle Controller
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebar = document.getElementById('admin-sidebar');
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      const toggleIcon = document.getElementById('sidebar-toggle-icon');
+      const mobileToggle = document.getElementById('admin-mobile-toggle');
+      const overlay = document.getElementById('admin-sidebar-overlay');
+
+      function updateToggleIcon(isCollapsed) {
+        if (toggleIcon) {
+          if (isCollapsed) {
+            toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+          } else {
+            toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+          }
+          if (window.lucide) window.lucide.createIcons();
+        }
+      }
+
+      function openMobileSidebar() {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMobileSidebar() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      // Desktop toggle
+      const currentCollapsed = sidebar.classList.contains('collapsed');
+      updateToggleIcon(currentCollapsed);
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          const isMobile = window.innerWidth <= 768;
+          if (isMobile) {
+            openMobileSidebar();
+          } else {
+            const collapsed = sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebar-collapsed', collapsed ? 'true' : 'false');
+            updateToggleIcon(collapsed);
+          }
+        });
+      }
+
+      // Mobile hamburger & Bottom menu button
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', openMobileSidebar);
+      }
+      const bottomMenuBtn = document.getElementById('admin-bottom-menu-btn');
+      if (bottomMenuBtn) {
+        bottomMenuBtn.addEventListener('click', openMobileSidebar);
+      }
+      if (overlay) {
+        overlay.addEventListener('click', closeMobileSidebar);
+      }
+
+      // Close mobile sidebar on nav item click
+      sidebar.querySelectorAll('.erp-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (window.innerWidth <= 768) closeMobileSidebar();
+        });
+      });
+    });
+  </script>
+
+  <%- script %>
+</body>
+</html>

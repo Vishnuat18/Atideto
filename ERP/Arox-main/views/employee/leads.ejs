@@ -1,0 +1,371 @@
+<style>
+  .emp-view-pill {
+    padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 6px; text-decoration: none; color: #64748B; background: transparent; transition: all 0.15s ease;
+  }
+  .emp-view-pill.active {
+    color: #000; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+</style>
+
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 24px; font-weight: 750;">Manage Leads & Sales Pipeline</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Track opportunities, corporate training deals, and partnership progression</div>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <!-- View Switcher -->
+    <div style="display: inline-flex; background: #F1F5F9; padding: 3px; border-radius: 8px; border: 1px solid #E2E8F0;">
+      <a href="/employee/leads?view=kanban" class="emp-view-pill <%= activeView === 'kanban' ? 'active' : '' %>">
+        <i data-lucide="kanban" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Kanban
+      </a>
+      <a href="/employee/leads?view=table" class="emp-view-pill <%= activeView === 'table' ? 'active' : '' %>">
+        <i data-lucide="table" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Table
+      </a>
+    </div>
+
+    <button onclick="openAddLeadModal()" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;">
+      <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+      <span>Add Lead</span>
+    </button>
+  </div>
+</div>
+
+<!-- Pipeline Metrics Bar -->
+<div class="erp-grid-4" style="margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; padding: 14px 18px; border-radius: 10px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Total Active Deals</div>
+    <div style="font-size: 22px; font-weight: 750; color: #000; margin-top: 2px;"><%= pipelineStats.totalDeals %></div>
+  </div>
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; padding: 14px 18px; border-radius: 10px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Total Pipeline Value</div>
+    <div style="font-size: 22px; font-weight: 750; color: #000; margin-top: 2px;">₹<%= pipelineStats.totalPipelineValue.toLocaleString('en-IN') %></div>
+  </div>
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; padding: 14px 18px; border-radius: 10px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Closed Won Revenue</div>
+    <div style="font-size: 22px; font-weight: 750; color: #000; margin-top: 2px;">₹<%= pipelineStats.wonValue.toLocaleString('en-IN') %></div>
+  </div>
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; padding: 14px 18px; border-radius: 10px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Conversion Rate</div>
+    <div style="font-size: 22px; font-weight: 750; color: #000; margin-top: 2px;"><%= pipelineStats.conversionRate %>%</div>
+  </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 14px 18px; border-radius: 10px; margin-bottom: 24px;">
+  <form method="GET" action="/employee/leads" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+    <input type="hidden" name="view" value="<%= activeView %>">
+    <div style="flex: 1; min-width: 200px; position: relative;">
+      <i data-lucide="search" style="position: absolute; left: 10px; top: 10px; width: 14px; height: 14px; color: #94A3B8;"></i>
+      <input type="text" name="search" value="<%= filters.search || '' %>" placeholder="Search deals, company, lead ID..." style="width: 100%; height: 36px; padding-left: 32px; padding-right: 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; outline: none;">
+    </div>
+    <select name="priority" onchange="this.form.submit()" style="height: 36px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+      <option value="all">All Priorities</option>
+      <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>>High Priority</option>
+      <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>>Medium Priority</option>
+      <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>>Low Priority</option>
+    </select>
+    <select name="source" onchange="this.form.submit()" style="height: 36px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+      <option value="all">All Sources</option>
+      <option value="inbound" <%= filters.source === 'inbound' ? 'selected' : '' %>>Inbound</option>
+      <option value="linkedin" <%= filters.source === 'linkedin' ? 'selected' : '' %>>LinkedIn</option>
+      <option value="referral" <%= filters.source === 'referral' ? 'selected' : '' %>>Referral</option>
+      <option value="cold_outreach" <%= filters.source === 'cold_outreach' ? 'selected' : '' %>>Cold Outreach</option>
+    </select>
+    <button type="submit" style="height: 36px; padding: 0 14px; background: #000; color: #fff; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none;">Apply</button>
+  </form>
+</div>
+
+<!-- KANBAN BOARD VIEW -->
+<% if (activeView === 'kanban') { %>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 24px;">
+    
+    <% 
+      const columns = [
+        { key: 'new', title: '1. New Lead', badge: '#F8FAFC' },
+        { key: 'contacted', title: '2. Contacted', badge: '#F1F5F9' },
+        { key: 'discussion', title: '3. Discussion', badge: '#E2E8F0' },
+        { key: 'proposal', title: '4. Proposal Sent', badge: '#CBD5E1' },
+        { key: 'won', title: '5. Closed Won ✓', badge: '#000000', textLight: true }
+      ];
+    %>
+
+    <% columns.forEach(col => { %>
+      <% const colLeads = kanbanLeads[col.key] || []; %>
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; min-height: 480px;">
+        <!-- Column Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0;">
+          <div style="font-size: 13px; font-weight: 750; color: #000;"><%= col.title %></div>
+          <% if (col.key === 'won') { %>
+            <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; background: #000; color: #fff; border-radius: 10px; border: 1px solid #000;">
+              <%= colLeads.length %>
+            </span>
+          <% } else { %>
+            <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; background: #F1F5F9; color: #000; border-radius: 10px; border: 1px solid #CBD5E1;">
+              <%= colLeads.length %>
+            </span>
+          <% } %>
+        </div>
+
+        <!-- Cards Container -->
+        <div style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+          <% if (colLeads.length > 0) { %>
+            <% colLeads.forEach(lead => { %>
+              <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                  <span style="font-size: 10px; font-weight: 700; color: #64748B;"><%= lead.lead_id %></span>
+                  <% if (lead.priority === 'high') { %>
+                    <span style="font-size: 9px; font-weight: 700; padding: 1px 5px; background: #000; color: #fff; border-radius: 4px;">HIGH</span>
+                  <% } else if (lead.priority === 'medium') { %>
+                    <span style="font-size: 9px; font-weight: 600; padding: 1px 5px; background: #F1F5F9; color: #000; border-radius: 4px;">MED</span>
+                  <% } else { %>
+                    <span style="font-size: 9px; font-weight: 500; padding: 1px 5px; background: #F8FAFC; color: #64748B; border-radius: 4px;">LOW</span>
+                  <% } %>
+                </div>
+
+                <h4 style="font-size: 13px; font-weight: 700; color: #000; margin: 0 0 4px 0;"><%= lead.title %></h4>
+                <div style="font-size: 11px; color: #475569; margin-bottom: 6px;">
+                  <%= lead.company_name || lead.client_company_name || 'Individual' %> &bull; <%= lead.contact_name %>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #E2E8F0;">
+                  <div style="font-size: 13px; font-weight: 750; color: #000;">
+                    ₹<%= Number(lead.deal_value || 0).toLocaleString('en-IN') %>
+                  </div>
+                  
+                  <!-- Stage Selector -->
+                  <select data-id="<%= lead.id %>" onchange="handleLeadStageQuickChange(this)" style="font-size: 10px; font-weight: 600; padding: 3px 6px; border: 1px solid #CBD5E1; border-radius: 4px; background: #fff; cursor: pointer;">
+                    <option value="new" <%= lead.stage === 'new' ? 'selected' : '' %>>New</option>
+                    <option value="contacted" <%= lead.stage === 'contacted' ? 'selected' : '' %>>Contacted</option>
+                    <option value="discussion" <%= lead.stage === 'discussion' ? 'selected' : '' %>>Discussion</option>
+                    <option value="proposal" <%= lead.stage === 'proposal' ? 'selected' : '' %>>Proposal</option>
+                    <option value="won" <%= lead.stage === 'won' ? 'selected' : '' %>>Won ✓</option>
+                    <option value="lost" <%= lead.stage === 'lost' ? 'selected' : '' %>>Lost ✗</option>
+                  </select>
+                </div>
+
+                <!-- Next follow-up tag -->
+                <% if (lead.next_followup_date) { %>
+                  <div style="margin-top: 6px; font-size: 10px; color: #64748B;">
+                    <i data-lucide="clock" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i>
+                    <%= new Date(lead.next_followup_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) %>
+                  </div>
+                <% } %>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div style="padding: 24px 8px; text-align: center; color: #94A3B8; font-size: 11px;">
+              No deals in this stage
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <!-- TABLE VIEW -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+      <thead>
+        <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; font-size: 11px; text-transform: uppercase; color: #64748B; font-weight: 700;">
+          <th style="padding: 12px 16px;">Lead ID</th>
+          <th style="padding: 12px 16px;">Deal Title</th>
+          <th style="padding: 12px 16px;">Company / Client</th>
+          <th style="padding: 12px 16px;">Contact Person</th>
+          <th style="padding: 12px 16px;">Value (₹)</th>
+          <th style="padding: 12px 16px;">Stage</th>
+          <th style="padding: 12px 16px;">Priority</th>
+          <th style="padding: 12px 16px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (leads && leads.length > 0) { %>
+          <% leads.forEach(lead => { %>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #64748B;"><%= lead.lead_id %></td>
+              <td style="padding: 12px 16px; font-weight: 650; color: #000;"><%= lead.title %></td>
+              <td style="padding: 12px 16px; color: #334155;"><%= lead.company_name || lead.client_company_name || 'N/A' %></td>
+              <td style="padding: 12px 16px; color: #475569;"><%= lead.contact_name %></td>
+              <td style="padding: 12px 16px; font-weight: 700; color: #000;">₹<%= Number(lead.deal_value || 0).toLocaleString('en-IN') %></td>
+              <td style="padding: 12px 16px;">
+                <select data-id="<%= lead.id %>" onchange="handleLeadStageQuickChange(this)" style="font-size: 11px; font-weight: 600; padding: 3px 6px; border: 1px solid #CBD5E1; border-radius: 4px; background: #fff;">
+                  <option value="new" <%= lead.stage === 'new' ? 'selected' : '' %>>New</option>
+                  <option value="contacted" <%= lead.stage === 'contacted' ? 'selected' : '' %>>Contacted</option>
+                  <option value="discussion" <%= lead.stage === 'discussion' ? 'selected' : '' %>>Discussion</option>
+                  <option value="proposal" <%= lead.stage === 'proposal' ? 'selected' : '' %>>Proposal</option>
+                  <option value="won" <%= lead.stage === 'won' ? 'selected' : '' %>>Won ✓</option>
+                  <option value="lost" <%= lead.stage === 'lost' ? 'selected' : '' %>>Lost ✗</option>
+                </select>
+              </td>
+              <td style="padding: 12px 16px; text-transform: capitalize; font-weight: 600;"><%= lead.priority %></td>
+              <td style="padding: 12px 16px;">
+                <a href="/employee/follow-ups?new=true&lead_id=<%= lead.id %>" style="font-size: 11px; padding: 4px 8px; background: #000; color: #fff; border-radius: 4px; text-decoration: none; font-weight: 600;">
+                  Call / Meet
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="8" style="padding: 32px; text-align: center; color: #64748B;">No leads found matching criteria.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<!-- Modal: Add New Lead -->
+<div id="addLeadModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Add New Deal / Lead</h3>
+      <button onclick="closeAddLeadModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="addLeadDirectForm" onsubmit="handleDirectLeadCreate(event)">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Deal Title *</label>
+          <input type="text" name="title" required placeholder="e.g. Corporate Training Batch - 20 Candidates" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Company Name *</label>
+            <input type="text" name="company_name" required placeholder="e.g. Apex Cloud Systems" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Contact Person *</label>
+            <input type="text" name="contact_name" required placeholder="e.g. Vikram Sharma" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Email</label>
+            <input type="email" name="email" placeholder="contact@company.com" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Phone</label>
+            <input type="tel" name="phone" placeholder="9876543210" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Deal Value (₹)</label>
+            <input type="number" name="deal_value" placeholder="e.g. 100000" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Stage</label>
+            <select name="stage" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="new">1. New Lead</option>
+              <option value="contacted">2. Contacted</option>
+              <option value="discussion">3. In Discussion</option>
+              <option value="proposal">4. Proposal Sent</option>
+              <option value="won">5. Closed Won</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Priority</label>
+            <select name="priority" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="high">High Priority</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Source</label>
+            <select name="source" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="inbound">Inbound</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="cold_outreach">Cold Outreach</option>
+              <option value="referral">Referral</option>
+              <option value="event">Campus Event</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Expected Close Date</label>
+          <input type="date" name="expected_close_date" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Notes & Scope</label>
+          <textarea name="notes" rows="2" placeholder="Syllabus discussed, timeline, batch size..." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+        <button type="button" onclick="closeAddLeadModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveLeadDirectBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Lead</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function handleLeadStageQuickChange(sel) {
+    if (!sel || !sel.dataset || !sel.dataset.id) return;
+    updateLeadStageQuick(sel.dataset.id, sel.value);
+  }
+
+  function openAddLeadModal() {
+    document.getElementById('addLeadModal').style.display = 'flex';
+  }
+  function closeAddLeadModal() {
+    document.getElementById('addLeadModal').style.display = 'none';
+  }
+
+  async function updateLeadStageQuick(id, stage) {
+    try {
+      const res = await fetch(`/api/employee/leads/${id}/stage`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.message || 'Failed to update stage');
+      }
+    } catch (e) {
+      alert('Error updating lead stage');
+    }
+  }
+
+  async function handleDirectLeadCreate(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveLeadDirectBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/api/employee/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to create lead');
+        btn.disabled = false;
+        btn.textContent = 'Save Lead';
+      }
+    } catch (err) {
+      alert('Error creating lead');
+      btn.disabled = false;
+      btn.textContent = 'Save Lead';
+    }
+  }
+</script>

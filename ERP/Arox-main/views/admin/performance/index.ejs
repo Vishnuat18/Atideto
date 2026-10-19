@@ -1,0 +1,217 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 26px; font-weight: 750;">Staff Performance & KPI Center</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Employee rankings, target attainment, conversion efficiency, and monthly goal setting</div>
+  </div>
+  <button onclick="openSetTargetModal()" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;">
+    <i data-lucide="target" style="width: 15px; height: 15px;"></i>
+    <span>Set Monthly Targets</span>
+  </button>
+</div>
+
+<!-- Team Leaderboard Table -->
+<div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; overflow-x: auto; margin-bottom: 32px;">
+  <div style="padding: 18px 20px; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h3 style="font-size: 16px; font-weight: 750; color: #000; margin: 0;">Employee Monthly Leaderboard</h3>
+      <p style="font-size: 12px; color: #64748B; margin: 2px 0 0 0;">Ranked by composite target achievement and closed deal revenue</p>
+    </div>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+    <thead>
+      <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; font-size: 11px; text-transform: uppercase; color: #64748B; font-weight: 700;">
+        <th style="padding: 12px 16px;">Rank & Staff</th>
+        <th style="padding: 12px 16px;">Target Score</th>
+        <th style="padding: 12px 16px;">Closed Revenue</th>
+        <th style="padding: 12px 16px;">Deals Won</th>
+        <th style="padding: 12px 16px;">Client Follow-ups</th>
+        <th style="padding: 12px 16px;">Appraisal Rating</th>
+        <th style="padding: 12px 16px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (leaderboard && leaderboard.length > 0) { %>
+        <% leaderboard.forEach((emp, index) => { %>
+          <tr style="border-bottom: 1px solid #E2E8F0;">
+            <td style="padding: 14px 16px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <% if (index === 0) { %>
+                  <span style="font-size: 12px; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+                    <%= index + 1 %>
+                  </span>
+                <% } else { %>
+                  <span style="font-size: 12px; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; color: #000; display: flex; align-items: center; justify-content: center;">
+                    <%= index + 1 %>
+                  </span>
+                <% } %>
+                <div>
+                  <div style="font-weight: 700; color: #000;"><%= emp.name %></div>
+                  <div style="font-size: 11px; color: #64748B;"><%= emp.email %></div>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 14px 16px;">
+              <div style="font-weight: 800; font-size: 16px; color: #000;"><%= emp.overallScore %>%</div>
+              <div style="width: 80px; height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; margin-top: 4px;">
+                <div class="admin-score-bar" data-score="<%= emp.overallScore %>" style="width: 0%; height: 100%; background: #000;"></div>
+              </div>
+            </td>
+            <td style="padding: 14px 16px; font-weight: 700; color: #000;">
+              ₹<%= Number(emp.actualRevenue || 0).toLocaleString('en-IN') %>
+              <div style="font-size: 11px; font-weight: 500; color: #64748B;">Target: ₹<%= Number(emp.target.revenue_target).toLocaleString('en-IN') %></div>
+            </td>
+            <td style="padding: 14px 16px;">
+              <span style="font-weight: 700; color: #000;"><%= emp.leadsWon %></span> / <%= emp.leadsCreated %> deals
+              <div style="font-size: 11px; color: #64748B;"><%= emp.conversionRate %>% conversion</div>
+            </td>
+            <td style="padding: 14px 16px;">
+              <span style="font-weight: 700; color: #000;"><%= emp.followupsCompleted %></span> / <%= emp.target.followups_target %>
+            </td>
+            <td style="padding: 14px 16px;">
+              <span style="font-size: 12px; font-weight: 750; color: #000;">★ <%= emp.rating %>/5.0</span>
+            </td>
+            <td style="padding: 14px 16px;">
+              <button
+                data-id="<%= emp.id %>"
+                data-name="<%= emp.name %>"
+                data-leads="<%= emp.target.leads_target %>"
+                data-revenue="<%= emp.target.revenue_target %>"
+                data-followups="<%= emp.target.followups_target %>"
+                data-rating="<%= emp.rating %>"
+                onclick="handleOpenEmployeeTarget(this)"
+                style="font-size: 11px; padding: 4px 10px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">
+                Set Goal
+              </button>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="7" style="padding: 32px; text-align: center; color: #64748B;">No performance data recorded.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal: Set Employee Targets -->
+<div id="setTargetModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Set Monthly Employee Target</h3>
+      <button onclick="closeSetTargetModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="targetForm" onsubmit="handleSaveTarget(event)">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Employee *</label>
+          <select name="employee_id" id="targetEmployeeSelect" required style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+            <% if (employees && employees.length > 0) { %>
+              <% employees.forEach(e => { %>
+                <option value="<%= e.id %>"><%= e.first_name %> <%= e.last_name %></option>
+              <% }) %>
+            <% } %>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Leads Target (Count)</label>
+            <input type="number" name="leads_target" id="targetLeadsInput" required value="30" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Revenue Target (₹)</label>
+            <input type="number" name="revenue_target" id="targetRevenueInput" required value="200000" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Follow-ups Target</label>
+            <input type="number" name="followups_target" id="targetFollowupsInput" required value="80" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Appraisal Rating (1.0 - 5.0)</label>
+            <input type="number" step="0.1" name="rating" id="targetRatingInput" value="4.5" min="1" max="5" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Managerial Feedback & Direction</label>
+          <textarea name="manager_feedback" id="targetFeedbackInput" rows="2" placeholder="Commendations, coaching tips, or target focus..." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+        <button type="button" onclick="closeSetTargetModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveTargetBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Goals</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openSetTargetModal() {
+    document.getElementById('setTargetModal').style.display = 'flex';
+  }
+  function closeSetTargetModal() {
+    document.getElementById('setTargetModal').style.display = 'none';
+  }
+
+  function handleOpenEmployeeTarget(btn) {
+    if (!btn || !btn.dataset) return;
+    openEmployeeTargetEdit(
+      btn.dataset.id,
+      btn.dataset.name,
+      Number(btn.dataset.leads || 30),
+      Number(btn.dataset.revenue || 200000),
+      Number(btn.dataset.followups || 80),
+      Number(btn.dataset.rating || 4.5)
+    );
+  }
+
+  function openEmployeeTargetEdit(empId, name, leads, rev, followups, rating) {
+    document.getElementById('targetEmployeeSelect').value = empId;
+    document.getElementById('targetLeadsInput').value = leads || 30;
+    document.getElementById('targetRevenueInput').value = rev || 200000;
+    document.getElementById('targetFollowupsInput').value = followups || 80;
+    document.getElementById('targetRatingInput').value = rating || 4.5;
+    openSetTargetModal();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.admin-score-bar').forEach(bar => {
+      bar.style.width = (bar.dataset.score || 0) + '%';
+    });
+  });
+
+  async function handleSaveTarget(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveTargetBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/admin/performance/targets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to update target');
+        btn.disabled = false;
+        btn.textContent = 'Save Goals';
+      }
+    } catch (err) {
+      alert('Error updating performance target');
+      btn.disabled = false;
+      btn.textContent = 'Save Goals';
+    }
+  }
+</script>

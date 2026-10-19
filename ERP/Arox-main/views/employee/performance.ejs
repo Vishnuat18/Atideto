@@ -1,0 +1,160 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 24px; font-weight: 750;">My Performance & KPIs</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Monthly target tracking, conversion analytics, and executive scorecard</div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 12px; font-weight: 600; padding: 6px 12px; background: #000; color: #fff; border-radius: 6px;">
+      ★ <%= metrics.rating %>/5.0 Top Performer
+    </span>
+  </div>
+</div>
+
+<!-- Scorecard Grid -->
+<div class="erp-grid-4" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+  <!-- Overall Score -->
+  <div class="erp-card" style="background: #000; color: #fff; border-radius: 12px; padding: 22px;">
+    <div style="font-size: 11px; font-weight: 600; color: #94A3B8; text-transform: uppercase;">Overall Target Score</div>
+    <div style="font-size: 32px; font-weight: 800; color: #fff; margin: 4px 0;"><%= metrics.overallScore %>%</div>
+    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; margin-top: 8px;">
+      <div class="perf-progress-bar" data-width="<%= metrics.overallScore %>" style="width: 0%; height: 100%; background: #fff;"></div>
+    </div>
+    <div style="font-size: 11px; color: #94A3B8; margin-top: 6px;">Weighted composite index</div>
+  </div>
+
+  <!-- Revenue Target -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 22px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Closed Revenue</div>
+    <div style="font-size: 24px; font-weight: 750; color: #000; margin: 4px 0;">₹<%= metrics.actualRevenue.toLocaleString('en-IN') %></div>
+    <div style="width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 8px;">
+      <div class="perf-progress-bar" data-width="<%= metrics.revenuePercent %>" style="width: 0%; height: 100%; background: #000;"></div>
+    </div>
+    <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+      Target: ₹<%= Number(metrics.target.revenue_target).toLocaleString('en-IN') %> (<%= metrics.revenuePercent %>%)
+    </div>
+  </div>
+
+  <!-- Deals Won -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 22px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Deals Converted</div>
+    <div style="font-size: 24px; font-weight: 750; color: #000; margin: 4px 0;"><%= metrics.leadsWon %> Deals</div>
+    <div style="width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 8px;">
+      <div class="perf-progress-bar" data-width="<%= metrics.leadsPercent %>" style="width: 0%; height: 100%; background: #000;"></div>
+    </div>
+    <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+      Conversion Rate: <span style="font-weight: 700; color: #000;"><%= metrics.conversionRate %>%</span>
+    </div>
+  </div>
+
+  <!-- Follow-ups Done -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 22px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase;">Client Touches & Calls</div>
+    <div style="font-size: 24px; font-weight: 750; color: #000; margin: 4px 0;"><%= metrics.followupsCompleted %> Logged</div>
+    <div style="width: 100%; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-top: 8px;">
+      <div class="perf-progress-bar" data-width="<%= metrics.followupsPercent %>" style="width: 0%; height: 100%; background: #000;"></div>
+    </div>
+    <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+      Target: <%= metrics.target.followups_target %> (<%= metrics.followupsPercent %>%)
+    </div>
+  </div>
+</div>
+
+<!-- Charts & Feedback Section -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 32px;">
+  <!-- Target vs Actual Chart -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px;">
+    <h3 style="font-size: 16px; font-weight: 750; color: #000; margin: 0 0 4px 0;">Monthly KPI Attainment</h3>
+    <p style="font-size: 12px; color: #64748B; margin: 0 0 20px 0;">Percentage completion against monthly managerial targets</p>
+    <div style="height: 240px; position: relative;">
+      <canvas id="performanceChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Manager Feedback & Notes -->
+  <div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 16px; font-weight: 750; color: #000; margin: 0;">Manager Appraisal & Feedback</h3>
+        <span style="font-size: 11px; font-weight: 600; color: #64748B;">Monthly Review</span>
+      </div>
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid #000; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+        <p style="font-size: 13px; color: #334155; line-height: 1.6; margin: 0;">
+          "<%= metrics.manager_feedback || 'Excellent client pipeline growth. Maintain momentum on college internship MOUs for upcoming batch intake.' %>"
+        </p>
+        <div style="font-size: 11px; color: #64748B; margin-top: 8px; font-weight: 600;">
+          &mdash; Operations Management Team
+        </div>
+      </div>
+    </div>
+
+    <!-- Closed Deals Highlight -->
+    <div>
+      <h4 style="font-size: 13px; font-weight: 700; color: #000; margin: 0 0 10px 0;">Recent Wins & Closures</h4>
+      <% if (wonDeals && wonDeals.length > 0) { %>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <% wonDeals.slice(0, 3).forEach(w => { %>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 8px 10px; background: #F8FAFC; border-radius: 6px;">
+              <span style="font-weight: 600; color: #000;"><%= w.title %></span>
+              <span style="font-weight: 750; color: #000;">₹<%= Number(w.deal_value || 0).toLocaleString('en-IN') %></span>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div style="font-size: 12px; color: #64748B;">No closed deals yet this period.</div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="employeePerfChartData">
+<%- JSON.stringify({
+  leadsPercent: metrics.leadsPercent || 0,
+  revenuePercent: metrics.revenuePercent || 0,
+  followupsPercent: metrics.followupsPercent || 0,
+  taskEfficiency: metrics.totalTasks > 0 ? Math.round((metrics.tasksCompleted / metrics.totalTasks) * 100) : 100
+}) %>
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.perf-progress-bar').forEach(bar => {
+      bar.style.width = (bar.dataset.width || 0) + '%';
+    });
+
+    const perfData = JSON.parse(document.getElementById('employeePerfChartData')?.textContent || '{}');
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Leads Target', 'Revenue Target', 'Follow-ups Target', 'Task Efficiency'],
+        datasets: [{
+          label: 'Attainment %',
+          data: [
+            perfData.leadsPercent || 0,
+            perfData.revenuePercent || 0,
+            perfData.followupsPercent || 0,
+            perfData.taskEfficiency || 100
+          ],
+          backgroundColor: '#000000',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: val => val + '%'
+            }
+          }
+        }
+      }
+    });
+  });
+</script>

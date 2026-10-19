@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'ATIDETO — Login' %></title>
+  <link rel="icon" type="image/svg+xml" href="/erp-assets/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #F1F5FB;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Soft Pastel Organic Blobs in Background (Reference Image Style) */
+    .bg-blob {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bg-blob-top-right {
+      top: -100px;
+      right: -80px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(162, 189, 245, 0.6) 0%, rgba(197, 216, 252, 0.3) 50%, transparent 70%);
+      border-radius: 46% 54% 60% 40% / 45% 35% 65% 55%;
+      filter: blur(20px);
+    }
+
+    .bg-blob-bottom-left {
+      bottom: -120px;
+      left: -100px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(153, 183, 243, 0.55) 0%, rgba(205, 222, 252, 0.25) 55%, transparent 72%);
+      border-radius: 54% 46% 38% 62% / 49% 60% 40% 51%;
+      filter: blur(25px);
+    }
+
+    .bg-blob-circle-top {
+      top: 60px;
+      left: 18%;
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, rgba(147, 180, 245, 0.7), rgba(188, 212, 252, 0.4));
+      border-radius: 50%;
+      box-shadow: 0 10px 25px rgba(135, 172, 245, 0.3);
+      filter: blur(2px);
+    }
+
+    .bg-blob-circle-right {
+      bottom: 22%;
+      right: 15%;
+      width: 32px;
+      height: 32px;
+      background: rgba(147, 180, 245, 0.6);
+      border-radius: 50%;
+    }
+
+    /* Outer Wrapper */
+    .login-viewport {
+      width: 100%;
+      max-width: 1100px;
+      position: relative;
+      z-index: 10;
+      margin: auto;
+    }
+
+    /* Main Container (Matching Reference Image Outline & Curves) */
+    .login-card {
+      background: #FFFFFF;
+      border: 2.5px solid #2054C8;
+      border-radius: 36px;
+      box-shadow: 0 25px 60px -15px rgba(32, 84, 200, 0.14),
+                  0 0 0 1px rgba(32, 84, 200, 0.05);
+      display: grid;
+      grid-template-columns: 44% 56%;
+      min-height: 590px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Section: Form & Role Switcher */
+    .login-left-pane {
+      padding: 44px 44px 38px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Brand Logo */
+    .brand-logo-text {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .brand-logo-text span {
+      color: #2054C8;
+    }
+
+    /* Main Headings */
+    .login-heading-area {
+      margin-top: 26px;
+      margin-bottom: 22px;
+    }
+
+    .login-title {
+      font-size: 38px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 13.5px;
+      color: #94A3B8;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    /* Three Switching Buttons for Logins */
+    .role-switcher-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      border: 1.5px solid #E2E8F0;
+      background: #F8FAFC;
+      color: #64748B;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .role-btn:hover {
+      background: #F1F5F9;
+      color: #1E293B;
+      border-color: #CBD5E1;
+    }
+
+    .role-btn.active {
+      background: #2054C8;
+      border-color: #2054C8;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(32, 84, 200, 0.3);
+    }
+
+    /* Form Fields (Underline Minimalist Style like Reference Image) */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.01em;
+    }
+
+    .input-line-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .minimal-input {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid #CBD5E1;
+      border-radius: 0;
+      background: transparent;
+      padding: 8px 30px 8px 0;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #0F172A;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .minimal-input::placeholder {
+      color: #94A3B8;
+      font-weight: 400;
+      font-size: 13.5px;
+    }
+
+    .minimal-input:focus {
+      border-bottom-color: #2054C8;
+    }
+
+    .pass-toggle-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s ease;
+    }
+
+    .pass-toggle-btn:hover {
+      color: #2054C8;
+    }
+
+    /* Inline Alert Message */
+    .alert-box {
+      display: none;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      margin-top: -6px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-error {
+      background: #FEF2F2;
+      border: 1px solid #FCA5A5;
+      color: #DC2626;
+    }
+
+    .alert-success {
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      color: #16A34A;
+    }
+
+    /* Submit Button (Vibrant Blue Rectangular Pill matching Reference) */
+    .submit-row {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .login-submit-btn {
+      background: #2054C8;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 38px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 18px rgba(32, 84, 200, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-submit-btn:hover {
+      background: #1842A0;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(32, 84, 200, 0.45);
+    }
+
+    .login-submit-btn:active {
+      transform: translateY(1px);
+    }
+
+    .login-submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Demo Quick Autofill Pill */
+    .demo-info-pill {
+      margin-top: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: fit-content;
+    }
+
+    .demo-info-pill:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+
+    .demo-info-pill code {
+      font-family: monospace;
+      color: #2054C8;
+      font-weight: 600;
+    }
+
+    /* Right Section: Large Art Illustration */
+    .login-right-pane {
+      background: #FAFCFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border-left: 1px solid rgba(226, 232, 240, 0.6);
+    }
+
+    /* Subtle background circle in right pane */
+    .right-ambient-bg {
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      background: radial-gradient(circle, rgba(206, 224, 255, 0.45) 0%, rgba(240, 246, 255, 0.2) 65%, transparent 80%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .illustration-img {
+      max-width: 95%;
+      max-height: 460px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .illustration-img.fade-out {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 920px) {
+      .login-card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        border-radius: 28px;
+      }
+
+      .login-left-pane {
+        padding: 36px 28px;
+        order: 2;
+      }
+
+      .login-right-pane {
+        padding: 36px 20px 20px;
+        border-left: none;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        order: 1;
+      }
+
+      .illustration-img {
+        max-height: 280px;
+      }
+
+      .login-title {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Organic Background Blobs matching reference image -->
+  <div class="bg-blob bg-blob-top-right"></div>
+  <div class="bg-blob bg-blob-bottom-left"></div>
+  <div class="bg-blob bg-blob-circle-top"></div>
+  <div class="bg-blob bg-blob-circle-right"></div>
+
+  <div class="login-viewport">
+    
+    <!-- Complete Login Card with Blue Outline -->
+    <main class="login-card">
+
+      <!-- Left Column: Form & Switcher -->
+      <section class="login-left-pane">
+        
+        <!-- Top Logo -->
+        <div>
+          <div class="brand-logo-text">
+            <span>ATIDETO</span> ERP
+          </div>
+
+          <!-- Headings -->
+          <div class="login-heading-area">
+            <h1 class="login-title">Login</h1>
+            <p class="login-subtitle">Welcome to log in to your background management system.</p>
+          </div>
+
+          <!-- Three buttons of switching of logins -->
+          <div class="role-switcher-row" role="tablist" aria-label="Portal Role Switcher">
+            <button type="button" class="role-btn active" id="btnStudent" onclick="selectRole('student')" role="tab" aria-selected="true">
+              <i data-lucide="graduation-cap" style="width: 15px; height: 15px;"></i>
+              <span>Student</span>
+            </button>
+            <button type="button" class="role-btn" id="btnEmployee" onclick="selectRole('employee')" role="tab" aria-selected="false">
+              <i data-lucide="briefcase" style="width: 15px; height: 15px;"></i>
+              <span>Employee</span>
+            </button>
+            <button type="button" class="role-btn" id="btnAdmin" onclick="selectRole('admin')" role="tab" aria-selected="false">
+              <i data-lucide="shield" style="width: 15px; height: 15px;"></i>
+              <span>Admin</span>
+            </button>
+          </div>
+
+          <!-- Form Fields (Email & Password Only) -->
+          <form id="loginForm" class="login-form" onsubmit="handleLoginSubmit(event)">
+            <input type="hidden" name="role" id="formRole" value="student">
+
+            <!-- Email Field -->
+            <div class="field-group">
+              <label class="field-label" for="inputEmail" id="emailLabel">Email</label>
+              <div class="input-line-wrapper">
+                <input 
+                  type="email" 
+                  id="inputEmail" 
+                  name="email" 
+                  class="minimal-input" 
+                  placeholder="student@atideto.com" 
+                  required 
+                  autocomplete="email"
+                >
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="field-group">
+              <label class="field-label" for="inputPassword">Password</label>
+              <div class="input-line-wrapper">
+                <input 
+                  type="password" 
+                  id="inputPassword" 
+                  name="password" 
+                  class="minimal-input" 
+                  placeholder="Please enter your password" 
+                  required 
+                  autocomplete="current-password"
+                >
+                <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password">
+                  <i data-lucide="eye" id="eyeIcon" style="width: 16px; height: 16px;"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Inline Alert Message -->
+            <div id="alertBox" class="alert-box"></div>
+
+            <!-- Submit Button (Vibrant Blue Rectangular Pill) -->
+            <div class="submit-row">
+              <button type="submit" id="submitBtn" class="login-submit-btn">
+                <span id="submitBtnText">LOGIN</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- 1-Click Demo Credentials Pill -->
+        <div class="demo-info-pill" onclick="fillDemoCredentials()" title="Click to auto-fill credentials">
+          <i data-lucide="zap" style="width: 13px; height: 13px; color: #2054C8;"></i>
+          <span>1-Click Demo: <code id="demoCredsText">student@atideto.com • student123</code></span>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Dynamic Art Illustration -->
+      <section class="login-right-pane">
+        <div class="right-ambient-bg"></div>
+        <img 
+          id="roleIllustration" 
+          src="/assets/login/students.png" 
+          alt="Portal Illustration" 
+          class="illustration-img"
+        >
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    // Configuration for the 3 Login Roles
+    const roleConfig = {
+      student: {
+        name: 'Student',
+        emailPlaceholder: 'student@atideto.com',
+        imageSrc: '/assets/login/students.png',
+        demoEmail: 'student@atideto.com',
+        demoPass: 'student123',
+        targetDashboard: '/student/dashboard'
+      },
+      employee: {
+        name: 'Employee',
+        emailPlaceholder: 'employee@atideto.com',
+        imageSrc: '/assets/login/employee.png',
+        demoEmail: 'employee@atideto.com',
+        demoPass: 'employee123',
+        targetDashboard: '/employee/dashboard'
+      },
+      admin: {
+        name: 'Admin',
+        emailPlaceholder: 'admin@atideto.com',
+        imageSrc: '/assets/login/admin.png',
+        demoEmail: 'admin@atideto.com',
+        demoPass: 'admin123',
+        targetDashboard: '/admin/dashboard'
+      }
+    };
+
+    let activeRole = 'student';
+
+    function selectRole(role) {
+      if (!roleConfig[role]) role = 'student';
+      activeRole = role;
+      const cfg = roleConfig[role];
+
+      // Update button active state
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      const currentBtn = document.getElementById('btn' + role.charAt(0).toUpperCase() + role.slice(1));
+      if (currentBtn) {
+        currentBtn.classList.add('active');
+        currentBtn.setAttribute('aria-selected', 'true');
+      }
+
+      // Update hidden form input
+      document.getElementById('formRole').value = role;
+
+      // Update email input placeholder
+      const emailInput = document.getElementById('inputEmail');
+      emailInput.placeholder = cfg.emailPlaceholder;
+
+      // Update demo pill text
+      document.getElementById('demoCredsText').textContent = `${cfg.demoEmail} • ${cfg.demoPass}`;
+
+      // Smooth Crossfade Image
+      const img = document.getElementById('roleIllustration');
+      img.classList.add('fade-out');
+      setTimeout(() => {
+        img.src = cfg.imageSrc;
+        img.classList.remove('fade-out');
+      }, 150);
+
+      // Hide previous alert
+      hideAlert();
+
+      // Update browser URL query parameter without refresh
+      try {
+        const url = new URL(window.location);
+        url.searchParams.set('role', role);
+        window.history.replaceState({}, '', url);
+      } catch (e) {}
+
+      lucide.createIcons();
+    }
+
+    function fillDemoCredentials() {
+      const cfg = roleConfig[activeRole];
+      document.getElementById('inputEmail').value = cfg.demoEmail;
+      document.getElementById('inputPassword').value = cfg.demoPass;
+      showAlert('success', `Filled demo credentials for ${cfg.name}! Click LOGIN to proceed.`);
+    }
+
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('inputPassword');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const isPassword = passInput.type === 'password';
+      passInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+
+    function showAlert(type, msg) {
+      const box = document.getElementById('alertBox');
+      box.className = 'alert-box ' + (type === 'error' ? 'alert-error' : 'alert-success');
+      box.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle-2'}" style="width: 15px; height: 15px; flex-shrink: 0;"></i><span>${msg}</span>`;
+      box.style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function hideAlert() {
+      const box = document.getElementById('alertBox');
+      box.style.display = 'none';
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      hideAlert();
+
+      const btn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('submitBtnText');
+      const email = document.getElementById('inputEmail').value.trim();
+      const password = document.getElementById('inputPassword').value;
+
+      if (!email || !password) {
+        showAlert('error', 'Please enter both email and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      btnText.textContent = 'LOGGING IN...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role: activeRole })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || 'Invalid email or password.');
+        }
+
+        showAlert('success', 'Authenticated! Opening dashboard...');
+        btnText.textContent = 'SUCCESS ✓';
+
+        // Direct navigation to user's dashboard
+        setTimeout(() => {
+          window.location.href = result.redirectUrl || roleConfig[activeRole].targetDashboard;
+        }, 300);
+
+      } catch (err) {
+        showAlert('error', err.message);
+        btn.disabled = false;
+        btnText.textContent = 'LOGIN';
+      }
+    }
+
+    // Initialize with role from URL param if available
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const roleParam = urlParams.get('role');
+      if (roleParam && ['student', 'employee', 'admin'].includes(roleParam.toLowerCase())) {
+        selectRole(roleParam.toLowerCase());
+      } else {
+        selectRole('student');
+      }
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

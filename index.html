@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Immediately disable browser scroll restoration on reload so it never jumps to the footer
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    </script>
+    <title>Atideto – Building Digital Experiences Beyond Imagination</title>
+    <meta name="description" content="Atideto is a premium software company delivering web, mobile, AI, and cloud solutions. Join our academy for world-class tech internships." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- Google Fonts: Modern Agency & Digital Product Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Atideto",
+      "url": "https://atideto.in",
+      "description": "Premium software company delivering digital experiences beyond imagination"
+    }
+    </script>
+
+    <!-- OpenGraph Image Fallback -->
+    <meta property="og:image" content="https://atideto.in/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Google Analytics (GA4) — Consent-Aware -->
+    <script>
+      // Only load GA4 if user has given analytics consent
+      function loadGA4() {
+        if (document.querySelector('script[src*="googletagmanager.com/gtag"]')) return;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-QR4GP78RY3';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-QR4GP78RY3', { anonymize_ip: true });
+      }
+      // Check on load
+      try {
+        var consent = JSON.parse(localStorage.getItem('atideto_cookie_consent') || '{}');
+        if (consent.analytics) loadGA4();
+      } catch(e) {}
+      // Listen for consent changes
+      window.addEventListener('cookie-consent-updated', function(e) {
+        if (e.detail && e.detail.analytics) loadGA4();
+      });
+    </script>
+
+    <!-- Microsoft Clarity — Consent-Aware -->
+    <script>
+      function loadClarity() {
+        if (window.clarity) return;
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window,document,"clarity","script","ykcb8mydx2");
+      }
+      try {
+        var consent2 = JSON.parse(localStorage.getItem('atideto_cookie_consent') || '{}');
+        if (consent2.analytics) loadClarity();
+      } catch(e) {}
+      window.addEventListener('cookie-consent-updated', function(e) {
+        if (e.detail && e.detail.analytics) loadClarity();
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

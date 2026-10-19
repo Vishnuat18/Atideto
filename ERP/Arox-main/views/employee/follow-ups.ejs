@@ -1,0 +1,324 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 24px; font-weight: 750;">Follow-ups & Client Communication</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Schedule calls, track meetings, log customer feedback, and record deal outcomes</div>
+  </div>
+  <button onclick="openScheduleModal()" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;">
+    <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+    <span>Schedule Follow-up</span>
+  </button>
+</div>
+
+<style>
+  .emp-tab-link {
+    padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; text-decoration: none; color: #64748B; background: transparent; transition: all 0.15s ease;
+  }
+  .emp-tab-link.active {
+    color: #000; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+</style>
+
+<!-- Tabs Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
+  <div style="display: inline-flex; background: #F1F5F9; padding: 4px; border-radius: 10px; border: 1px solid #E2E8F0;">
+    <a href="/employee/follow-ups?tab=today" class="emp-tab-link <%= activeTab === 'today' ? 'active' : '' %>">
+      Today (<%= stats.today %>)
+    </a>
+    <a href="/employee/follow-ups?tab=upcoming" class="emp-tab-link <%= activeTab === 'upcoming' ? 'active' : '' %>">
+      Upcoming
+    </a>
+    <a href="/employee/follow-ups?tab=overdue" class="emp-tab-link <%= activeTab === 'overdue' ? 'active' : '' %>">
+      Overdue (<%= stats.overdue %>)
+    </a>
+    <a href="/employee/follow-ups?tab=completed" class="emp-tab-link <%= activeTab === 'completed' ? 'active' : '' %>">
+      Completed History (<%= stats.completed %>)
+    </a>
+    <a href="/employee/follow-ups?tab=all" class="emp-tab-link <%= activeTab === 'all' ? 'active' : '' %>">
+      All (<%= stats.total %>)
+    </a>
+  </div>
+</div>
+
+<!-- Follow-ups List -->
+<% if (followUps && followUps.length > 0) { %>
+  <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px;">
+    <% followUps.forEach(f => { %>
+      <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
+        <div style="display: flex; align-items: flex-start; gap: 14px; flex: 1; min-width: 280px;">
+          <!-- Icon -->
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <% if (f.type === 'phone_call') { %>
+              <i data-lucide="phone" style="width: 20px; height: 20px;"></i>
+            <% } else if (f.type === 'video_meeting') { %>
+              <i data-lucide="video" style="width: 20px; height: 20px;"></i>
+            <% } else if (f.type === 'email') { %>
+              <i data-lucide="mail" style="width: 20px; height: 20px;"></i>
+            <% } else { %>
+              <i data-lucide="calendar" style="width: 20px; height: 20px;"></i>
+            <% } %>
+          </div>
+
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h3 style="font-size: 15px; font-weight: 750; color: #000; margin: 0;"><%= f.title %></h3>
+              <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; background: #F1F5F9; border-radius: 4px;">
+                <%= f.type.replace('_', ' ') %>
+              </span>
+              <% if (f.status === 'completed') { %>
+                <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; background: #000; color: #fff; border-radius: 4px;">
+                  COMPLETED
+                </span>
+              <% } else if (new Date(f.scheduled_at) < new Date()) { %>
+                <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; background: #FEE2E2; color: #DC2626; border-radius: 4px;">
+                  OVERDUE
+                </span>
+              <% } %>
+            </div>
+
+            <div style="font-size: 13px; color: #334155; margin-top: 4px;">
+              <strong><%= f.lead_company || f.client_company || 'Corporate Client' %></strong>
+              <% if (f.lead_contact || f.client_contact) { %>
+                &bull; Contact: <%= f.lead_contact || f.client_contact %>
+              <% } %>
+            </div>
+
+            <div style="font-size: 12px; color: #64748B; margin-top: 4px;">
+              <i data-lucide="calendar" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i>
+              <%= new Date(f.scheduled_at).toLocaleString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+            </div>
+
+            <% if (f.notes) { %>
+              <div style="margin-top: 8px; font-size: 12px; color: #475569; background: #F8FAFC; border-radius: 6px; padding: 8px 10px; border-left: 3px solid #000;">
+                <%= f.notes %>
+              </div>
+            <% } %>
+
+            <% if (f.outcome) { %>
+              <div style="margin-top: 6px; font-size: 11px; font-weight: 600; color: #000;">
+                Outcome: <span style="text-transform: capitalize; text-decoration: underline;"><%= f.outcome.replace('_', ' ') %></span>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px;">
+          <% if (f.status !== 'completed') { %>
+            <button type="button"
+              data-id="<%= f.id %>"
+              data-title="<%= f.title %>"
+              onclick="handleOpenLogOutcomeModal(this)"
+              style="padding: 8px 14px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+              Log Outcome / Complete ✓
+            </button>
+          <% } else { %>
+            <span style="font-size: 12px; color: #64748B; font-weight: 600; padding: 6px 12px; background: #F1F5F9; border-radius: 6px;">Logged ✓</span>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <div class="erp-card" style="padding: 48px; text-align: center; background: #fff; border: 1px solid #E2E8F0; border-radius: 12px;">
+    <i data-lucide="phone-call" style="width: 40px; height: 40px; color: #94A3B8; margin: 0 auto 12px auto;"></i>
+    <h3 style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 6px;">No follow-ups in this tab</h3>
+    <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">Keep up the outreach! Schedule a new touchpoint with clients or leads.</p>
+    <button onclick="openScheduleModal()" class="erp-btn erp-btn-sm" style="padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;">
+      Schedule Follow-up
+    </button>
+  </div>
+<% } %>
+
+<!-- Modal: Schedule Follow-up -->
+<div id="scheduleModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 500px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Schedule Follow-up</h3>
+      <button onclick="closeScheduleModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="scheduleForm" onsubmit="handleScheduleFollowUp(event)">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Follow-up Title / Agenda *</label>
+          <input type="text" name="title" required placeholder="e.g. Discuss MOU pricing & batch schedule" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Link to Lead (Optional)</label>
+            <select name="lead_id" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="">-- None --</option>
+              <% if (leads && leads.length > 0) { %>
+                <% leads.forEach(l => { %>
+                  <option value="<%= l.id %>"><%= l.title %> (<%= l.company_name %>)</option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Link to Client (Optional)</label>
+            <select name="client_id" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="">-- None --</option>
+              <% if (clients && clients.length > 0) { %>
+                <% clients.forEach(c => { %>
+                  <option value="<%= c.id %>"><%= c.company_name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Communication Type</label>
+            <select name="type" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="phone_call">Phone Call</option>
+              <option value="video_meeting">Video Meeting (Google Meet / Zoom)</option>
+              <option value="in_person">In-Person Campus/Office Visit</option>
+              <option value="email">Email Outreach</option>
+              <option value="demo">Product / Curriculum Demo</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Date & Time *</label>
+            <input type="datetime-local" name="scheduled_at" required style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Preparation Notes / Objective</label>
+          <textarea name="notes" rows="2" placeholder="Key questions, pricing slabs, brochure references..." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+        <button type="button" onclick="closeScheduleModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveFollowUpBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Schedule</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Log Outcome & Complete -->
+<div id="logOutcomeModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Log Meeting / Call Outcome</h3>
+      <button onclick="closeLogOutcomeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="outcomeForm" onsubmit="handleLogOutcome(event)">
+      <input type="hidden" name="follow_up_id" id="outcomeFollowUpId">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 13px; color: #64748B;" id="outcomeTitleText"></div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Meeting Result / Outcome *</label>
+          <select name="outcome" required style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+            <option value="interested">Positive / Client is Highly Interested</option>
+            <option value="proposal_requested">Client Requested Formal Proposal</option>
+            <option value="callback_requested">Client Requested Callback Later</option>
+            <option value="converted">Deal Converted & Signed!</option>
+            <option value="not_interested">Not Interested at this time</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Discussion Notes & Next Steps</label>
+          <textarea name="notes" rows="3" required placeholder="Summarize feedback, client budget, requested dates..." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+        <button type="button" onclick="closeLogOutcomeModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveOutcomeBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Mark Complete ✓</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openScheduleModal() {
+    document.getElementById('scheduleModal').style.display = 'flex';
+  }
+  function closeScheduleModal() {
+    document.getElementById('scheduleModal').style.display = 'none';
+  }
+
+  function handleOpenLogOutcomeModal(btn) {
+    if (!btn || !btn.dataset) return;
+    openLogOutcomeModal(btn.dataset.id, btn.dataset.title);
+  }
+
+  function openLogOutcomeModal(id, title) {
+    document.getElementById('outcomeFollowUpId').value = id;
+    document.getElementById('outcomeTitleText').textContent = `Completing: "${title}"`;
+    document.getElementById('logOutcomeModal').style.display = 'flex';
+  }
+  function closeLogOutcomeModal() {
+    document.getElementById('logOutcomeModal').style.display = 'none';
+  }
+
+  async function handleScheduleFollowUp(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveFollowUpBtn');
+    btn.disabled = true;
+    btn.textContent = 'Scheduling...';
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/api/employee/follow-ups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to schedule');
+        btn.disabled = false;
+        btn.textContent = 'Schedule';
+      }
+    } catch (err) {
+      alert('Error scheduling follow-up');
+      btn.disabled = false;
+      btn.textContent = 'Schedule';
+    }
+  }
+
+  async function handleLogOutcome(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveOutcomeBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const formData = new FormData(e.target);
+    const id = formData.get('follow_up_id');
+    const outcome = formData.get('outcome');
+    const notes = formData.get('notes');
+
+    try {
+      const res = await fetch(`/api/employee/follow-ups/${id}/complete`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ outcome, notes })
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to save outcome');
+        btn.disabled = false;
+        btn.textContent = 'Mark Complete ✓';
+      }
+    } catch (err) {
+      alert('Error updating follow-up');
+      btn.disabled = false;
+      btn.textContent = 'Mark Complete ✓';
+    }
+  }
+</script>

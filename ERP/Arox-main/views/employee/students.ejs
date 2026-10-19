@@ -1,0 +1,51 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 24px; font-weight: 750;">Students & Corporate Batch Cohorts</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Explore active students, batch allocations, and training progress</div>
+  </div>
+</div>
+
+<div class="erp-card" style="background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+    <thead>
+      <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; font-size: 11px; text-transform: uppercase; color: #64748B; font-weight: 700;">
+        <th style="padding: 12px 16px;">Student ID</th>
+        <th style="padding: 12px 16px;">Student Name</th>
+        <th style="padding: 12px 16px;">College & Department</th>
+        <th style="padding: 12px 16px;">Assigned Program</th>
+        <th style="padding: 12px 16px;">Contact</th>
+        <th style="padding: 12px 16px;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (students && students.length > 0) { %>
+        <% students.forEach(s => { %>
+          <tr style="border-bottom: 1px solid #E2E8F0;">
+            <td style="padding: 12px 16px; font-weight: 600; color: #64748B;"><%= s.student_id %></td>
+            <td style="padding: 12px 16px; font-weight: 650; color: #000;"><%= s.first_name %> <%= s.last_name %></td>
+            <td style="padding: 12px 16px; color: #334155;">
+              <div><%= s.college || 'Anna University' %></div>
+              <div style="font-size: 11px; color: #64748B;"><%= s.department || 'CSE' %></div>
+            </td>
+            <td style="padding: 12px 16px; color: #334155;">
+              <%= s.course_title || 'Full Stack Web Development' %>
+            </td>
+            <td style="padding: 12px 16px; color: #475569; font-size: 12px;">
+              <div><%= s.email %></div>
+              <div><%= s.phone %></div>
+            </td>
+            <td style="padding: 12px 16px;">
+              <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; background: #000; color: #fff; border-radius: 4px; text-transform: uppercase;">
+                <%= s.status || 'Active' %>
+              </span>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="6" style="padding: 32px; text-align: center; color: #64748B;">No students registered.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

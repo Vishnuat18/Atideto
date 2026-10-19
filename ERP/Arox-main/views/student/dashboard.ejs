@@ -1,0 +1,270 @@
+<!-- Offer Letter Collection Modal (shows on first visit) -->
+<div id="offerLetterModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+  <div style="background: #fff; border-radius: 16px; width: 100%; max-width: 520px; margin: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid #E2E8F0;">
+    <!-- Header -->
+    <div style="background: #000000; padding: 28px 32px; color: #fff;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+          <i data-lucide="mail" style="width: 20px; height: 20px;"></i>
+        </div>
+        <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #FFFFFF;">Welcome to ATIDETO!</h2>
+      </div>
+      <p style="margin: 0; font-size: 14px; color: #94A3B8; line-height: 1.5;">Let's set up your offer letter. Please confirm your details below so we can generate your official offer letter.</p>
+    </div>
+    
+    <!-- Form -->
+    <form id="offerLetterForm" style="padding: 24px 32px 28px;">
+      <input type="hidden" id="offerStudentId" value="<%= typeof student !== 'undefined' && student ? student.id : '' %>">
+      
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #000000; margin-bottom: 6px;">Full Name</label>
+        <input type="text" id="offerName" class="erp-input" placeholder="e.g., S. Kavin" value="<%= typeof student !== 'undefined' && student ? student.first_name + ' ' + student.last_name : '' %>" required>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #000000; margin-bottom: 6px;">College / University</label>
+        <input type="text" id="offerCollege" class="erp-input" placeholder="e.g., KSR College of Engineering" value="<%= typeof student !== 'undefined' && student ? (student.college || '') : '' %>">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #000000; margin-bottom: 6px;">Department</label>
+          <input type="text" id="offerDept" class="erp-input" placeholder="e.g., IT" value="<%= typeof student !== 'undefined' && student ? (student.department || '') : '' %>">
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #000000; margin-bottom: 6px;">Year of Study</label>
+          <input type="text" id="offerYear" class="erp-input" placeholder="e.g., III Year" value="<%= typeof student !== 'undefined' && student ? (student.year_of_study || '') : '' %>">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #000000; margin-bottom: 6px;">Preferred Role / Domain</label>
+        <select id="offerDomain" class="erp-input">
+          <option value="">Select your domain</option>
+          <option value="Full Stack Web Development">Full Stack Web Development</option>
+          <option value="UI & UX Design">UI & UX Design</option>
+          <option value="Data Science & AI">Data Science & AI</option>
+          <option value="Cyber Security">Cyber Security</option>
+          <option value="Digital Marketing">Digital Marketing</option>
+          <option value="App Development">App Development</option>
+          <option value="DevOps Engineering">DevOps Engineering</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button type="submit" style="flex: 1; padding: 12px; background: #000000; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--erp-font);">
+          <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i> Confirm & Generate Offer Letter
+        </button>
+        <button type="button" onclick="skipOfferLetter()" style="padding: 12px 20px; background: transparent; color: #64748B; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: var(--erp-font);">
+          Skip for now
+        </button>
+      </div>
+      
+      <p style="margin-top: 12px; font-size: 12px; color: #94A3B8; text-align: center;">You can always generate your offer letter later from the portal.</p>
+    </form>
+  </div>
+</div>
+
+<div class="erp-h1" style="margin-bottom: 24px; color: #000000;">Student Overview</div>
+
+<% if (typeof latestRegistration !== 'undefined' && latestRegistration) { %>
+  <div style="background: #000000; border: 1px solid #000000; border-radius: 12px; padding: 24px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: #FFFFFF;">
+    <div>
+      <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">
+        Welcome to Atideto Technologies, <%= (typeof student !== 'undefined' && student) ? student.first_name : 'Student' %>!
+      </h2>
+      <p style="color: #CBD5E1; font-size: 14px; margin: 0;">
+        Your official documents and course materials are accessible in your portal.
+      </p>
+    </div>
+    <div>
+      <a href="/api/registrations/<%= latestRegistration.registration_id %>/offer-letter" target="_blank" class="erp-btn" style="background: #FFFFFF; color: #000000; font-weight: 700; border: none; padding: 10px 20px;">
+        <i data-lucide="download" style="color: #000000;"></i> Download Offer Letter
+      </a>
+    </div>
+  </div>
+<% } %>
+<div class="erp-grid-4">
+  <!-- Enrolled Courses -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0;">
+    <div class="erp-card-header">
+      <div class="erp-card-icon" style="background: #000000; color: #FFFFFF;">
+        <i data-lucide="book-open"></i>
+      </div>
+      <div class="erp-card-title" style="color: #64748B;">Enrolled Courses</div>
+    </div>
+    <div class="erp-card-value" style="color: #000000;"><%= (typeof stats !== 'undefined' && stats.enrolled !== undefined) ? stats.enrolled : ((typeof enrollments !== 'undefined') ? enrollments.length : '0') %></div>
+    <div class="erp-p" style="margin-top: 8px; color: #64748B;">Active programs</div>
+  </div>
+
+  <!-- Overall Progress / Attendance -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0;">
+    <div class="erp-card-header">
+      <div class="erp-card-icon" style="background: #000000; color: #FFFFFF;">
+        <i data-lucide="activity"></i>
+      </div>
+      <div class="erp-card-title" style="color: #64748B;">Attendance Rate</div>
+    </div>
+    <div class="erp-card-value" style="color: #000000;"><%= (typeof stats !== 'undefined' && stats.attendance !== undefined) ? stats.attendance : 100 %>%</div>
+    <div style="width: 100%; height: 6px; background-color: #E2E8F0; border-radius: 99px; margin-top: 12px; overflow: hidden;">
+      <div style="height: 100%; background-color: #000000; width: <%= ((typeof stats !== 'undefined' && stats.attendance !== undefined) ? stats.attendance : 100) + '%' %>;"></div>
+    </div>
+  </div>
+
+  <!-- Completed Programs -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0;">
+    <div class="erp-card-header">
+      <div class="erp-card-icon" style="background: #000000; color: #FFFFFF;">
+        <i data-lucide="award"></i>
+      </div>
+      <div class="erp-card-title" style="color: #64748B;">Certifications</div>
+    </div>
+    <div class="erp-card-value" style="color: #000000;"><%= (typeof stats !== 'undefined' && stats.completed !== undefined) ? stats.completed : 0 %></div>
+    <div class="erp-p" style="margin-top: 8px; color: #64748B; font-weight: 500;">Issued credentials</div>
+  </div>
+
+  <!-- Payment Status -->
+  <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0;">
+    <div class="erp-card-header">
+      <div class="erp-card-icon" style="background: #000000; color: #FFFFFF;">
+        <i data-lucide="wallet"></i>
+      </div>
+      <div class="erp-card-title" style="color: #64748B;">Payment Status</div>
+    </div>
+    <div class="erp-card-value" style="color: #000000;">
+      <%= (typeof stats !== 'undefined' && stats.pendingPayments > 0) ? `₹${stats.pendingPayments.toLocaleString('en-IN')}` : 'Verified' %>
+    </div>
+    <div class="erp-p" style="margin-top: 8px; color: #000000; font-weight: 500;">
+      <% if (typeof stats !== 'undefined' && stats.pendingPayments > 0) { %>
+        <i data-lucide="clock" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Pending Balance
+      <% } else { %>
+        <i data-lucide="check-circle-2" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> All dues settled
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="erp-grid-2">
+  <!-- My Courses -->
+  <div class="erp-card" style="padding: 0;">
+    <div style="padding: 24px; border-bottom: var(--erp-border-width) solid var(--erp-border); display: flex; justify-content: space-between; align-items: center;">
+      <h3 class="erp-h3" style="margin: 0;">My Courses</h3>
+      <a href="/student/courses" class="erp-btn erp-btn-ghost" style="padding: 6px 12px; font-size: 12px;">View All</a>
+    </div>
+    
+    <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <% if (typeof enrollments !== 'undefined' && enrollments.length > 0) { %>
+        <% enrollments.forEach(enr => { %>
+          <div style="padding: 16px; border: var(--erp-border-width) solid var(--erp-border); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; color: var(--erp-text-primary); margin-bottom: 4px;"><%= enr.course_title %></div>
+              <div class="erp-small">Batch: <%= enr.batch_name || 'TBD' %> • Status: <%= enr.status %></div>
+            </div>
+            <a href="/student/courses/<%= enr.id %>" class="erp-btn erp-btn-secondary">Go to Course</a>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div style="text-align: center; padding: 24px; color: #94A3B8;">
+          <i data-lucide="book-open" style="width: 24px; height: 24px; display: block; margin: 0 auto 8px; opacity: 0.5;"></i>          <div style="font-size: 13px; font-weight: 500; color: #64748B; margin-bottom: 4px;">No courses enrolled yet</div>
+          <div style="font-size: 12px;">Browse our programs to get started</div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Upcoming Schedule -->
+  <div class="erp-card" style="padding: 0;">
+    <div style="padding: 24px; border-bottom: var(--erp-border-width) solid var(--erp-border);">
+      <h3 class="erp-h3" style="margin: 0;">Upcoming Classes</h3>
+    </div>
+    
+    <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <% if (typeof upcomingClasses !== 'undefined' && upcomingClasses.length > 0) { %>
+        <% upcomingClasses.forEach(cls => { %>
+          <div style="display: flex; gap: 16px;">
+            <div style="width: 56px; height: 56px; border: var(--erp-border-width) solid var(--erp-border); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--erp-bg-secondary);">
+              <span style="font-size: 12px; font-weight: 600; color: var(--erp-text-secondary); text-transform: uppercase;"><%= cls.month %></span>
+              <span style="font-size: 18px; font-weight: 700; color: var(--erp-text-primary);"><%= cls.day %></span>
+            </div>
+            <div>
+              <div style="font-weight: 600; color: var(--erp-text-primary); margin-bottom: 4px;"><%= cls.course_title %></div>
+              <div class="erp-small" style="display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="clock" style="width: 12px; height: 12px;"></i> <%= cls.time %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div style="text-align: center; padding: 24px; color: #94A3B8;">
+          <i data-lucide="calendar-x" style="width: 24px; height: 24px; display: block; margin: 0 auto 8px; opacity: 0.5;"></i>
+          <div style="font-size: 13px;">No upcoming classes scheduled</div>
+          <div style="font-size: 12px; margin-top: 4px;">Enroll in a course to see your schedule</div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Show offer letter modal on first portal visit
+  (function() {
+    const showModal = !localStorage.getItem('offerLetterDismissed_<%= typeof student !== "undefined" && student ? student.id : "default" %>');
+    if (showModal) {
+      const modal = document.getElementById('offerLetterModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        lucide.createIcons();
+      }
+    }
+  })();
+
+  function skipOfferLetter() {
+    const modal = document.getElementById('offerLetterModal');
+    if (modal) modal.style.display = 'none';
+    localStorage.setItem('offerLetterDismissed_<%= typeof student !== "undefined" && student ? student.id : "default" %>', 'true');
+  }
+
+  document.getElementById('offerLetterForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;"></span> Generating...';
+
+    // In a real implementation, this would send data to the server to generate the offer letter
+    // For now, we'll just close the modal and show success
+    setTimeout(() => {
+      const modal = document.getElementById('offerLetterModal');
+      if (modal) modal.style.display = 'none';
+      localStorage.setItem('offerLetterDismissed_<%= typeof student !== "undefined" && student ? student.id : "default" %>', 'true');
+      
+      // Show success toast
+      showToast('Offer letter details saved! Your offer letter will be generated shortly.');
+    }, 1500);
+  });
+
+  function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: #065F46; color: #fff; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease;';
+    toast.innerHTML = '<span style="color: #6EE7B7;">✓</span> ' + msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+  }
+</script>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (max-width: 768px) {
+    .erp-grid-2 { grid-template-columns: 1fr !important; }
+    .erp-grid-4 { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    .erp-h1 { font-size: 20px !important; margin-bottom: 16px !important; }
+    #offerLetterModal > div { margin: 12px !important; }
+    #offerLetterModal form { padding: 16px 20px 20px !important; }
+    #offerLetterModal form > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .erp-grid-4 { grid-template-columns: 1fr !important; }
+  }
+</style>

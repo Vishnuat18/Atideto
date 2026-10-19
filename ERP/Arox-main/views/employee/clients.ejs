@@ -1,0 +1,384 @@
+<div class="erp-h1" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #000000;">
+  <div>
+    <div style="font-size: 24px; font-weight: 750;">Find Clients & Corporate Partners</div>
+    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 4px;">Search, explore, and convert corporate accounts and college partnerships</div>
+  </div>
+  <button onclick="openAddClientModal()" class="erp-btn erp-btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;">
+    <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+    <span>Add New Client</span>
+  </button>
+</div>
+
+<!-- Search & Filter Controls -->
+<div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 18px; border-radius: 12px; margin-bottom: 24px;">
+  <form method="GET" action="/employee/clients" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+    <!-- Search Bar -->
+    <div style="flex: 1; min-width: 240px; position: relative;">
+      <i data-lucide="search" style="position: absolute; left: 12px; top: 11px; width: 16px; height: 16px; color: #94A3B8;"></i>
+      <input type="text" name="search" value="<%= filters.search || '' %>" placeholder="Search by company name, contact, email or phone..." style="width: 100%; height: 40px; padding-left: 38px; padding-right: 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 13px; outline: none;">
+    </div>
+
+    <!-- Industry Filter -->
+    <select name="industry" onchange="this.form.submit()" style="height: 40px; padding: 0 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 13px; background: #fff; cursor: pointer;">
+      <option value="all">All Industries</option>
+      <option value="IT & Software" <%= filters.industry === 'IT & Software' ? 'selected' : '' %>>IT & Software</option>
+      <option value="Education & Colleges" <%= filters.industry === 'Education & Colleges' ? 'selected' : '' %>>Education & Colleges</option>
+      <option value="Healthcare Tech" <%= filters.industry === 'Healthcare Tech' ? 'selected' : '' %>>Healthcare Tech</option>
+      <option value="Financial Services" <%= filters.industry === 'Financial Services' ? 'selected' : '' %>>Financial Services</option>
+      <option value="Manufacturing" <%= filters.industry === 'Manufacturing' ? 'selected' : '' %>>Manufacturing</option>
+    </select>
+
+    <!-- Location Filter -->
+    <select name="location" onchange="this.form.submit()" style="height: 40px; padding: 0 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 13px; background: #fff; cursor: pointer;">
+      <option value="all">All Locations</option>
+      <option value="Chennai" <%= filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+      <option value="Bangalore" <%= filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+      <option value="Hyderabad" <%= filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+      <option value="Mumbai" <%= filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+      <option value="Delhi" <%= filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+      <option value="Remote" <%= filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+    </select>
+
+    <!-- Status Filter -->
+    <select name="status" onchange="this.form.submit()" style="height: 40px; padding: 0 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 13px; background: #fff; cursor: pointer;">
+      <option value="all">All Statuses</option>
+      <option value="prospect" <%= filters.status === 'prospect' ? 'selected' : '' %>>Prospect</option>
+      <option value="contacted" <%= filters.status === 'contacted' ? 'selected' : '' %>>Contacted</option>
+      <option value="partner" <%= filters.status === 'partner' ? 'selected' : '' %>>Partner</option>
+      <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>>Closed</option>
+    </select>
+
+    <button type="submit" class="erp-btn erp-btn-sm" style="height: 40px; padding: 0 16px; background: #000; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;">Filter</button>
+    <a href="/employee/clients" style="font-size: 12px; color: #64748B; text-decoration: underline; margin-left: 4px;">Reset</a>
+  </form>
+</div>
+
+<!-- Clients Directory Grid -->
+<% if (clients && clients.length > 0) { %>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; margin-bottom: 32px;">
+    <% clients.forEach(client => { %>
+      <div class="erp-card" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: box-shadow 0.2s ease;">
+        <div>
+          <!-- Header: Company & Status -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div>
+              <span style="font-size: 10px; font-weight: 700; color: #64748B; letter-spacing: 0.05em; text-transform: uppercase;"><%= client.client_code %></span>
+              <h3 style="font-size: 16px; font-weight: 750; color: #000; margin: 2px 0 0 0;"><%= client.company_name %></h3>
+            </div>
+            <% if (client.status === 'partner') { %>
+              <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; background: #000; color: #fff; border-radius: 6px;">Partner</span>
+            <% } else if (client.status === 'contacted') { %>
+              <span style="font-size: 11px; font-weight: 600; padding: 3px 8px; background: #F1F5F9; color: #000; border: 1px solid #CBD5E1; border-radius: 6px;">Contacted</span>
+            <% } else { %>
+              <span style="font-size: 11px; font-weight: 600; padding: 3px 8px; background: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0; border-radius: 6px;">Prospect</span>
+            <% } %>
+          </div>
+
+          <!-- Tags -->
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+            <span style="font-size: 11px; padding: 2px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; color: #475569;">
+              <i data-lucide="tag" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> <%= client.industry %>
+            </span>
+            <span style="font-size: 11px; padding: 2px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; color: #475569;">
+              <i data-lucide="map-pin" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> <%= client.location %>
+            </span>
+            <% if (client.company_size) { %>
+              <span style="font-size: 11px; padding: 2px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; color: #475569;">
+                <i data-lucide="users" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> <%= client.company_size %>
+              </span>
+            <% } %>
+          </div>
+
+          <!-- Contact Details -->
+          <div style="font-size: 12px; color: #334155; line-height: 1.6; margin-bottom: 12px; padding: 10px; background: #F8FAFC; border-radius: 8px;">
+            <div><strong>Contact:</strong> <%= client.contact_person %></div>
+            <div><strong>Email:</strong> <%= client.email %></div>
+            <div><strong>Phone:</strong> <%= client.phone %></div>
+            <% if (client.requirements) { %>
+              <div style="margin-top: 4px; font-size: 11px; color: #64748B; border-top: 1px dashed #E2E8F0; padding-top: 4px;">
+                <em>"<%= client.requirements %>"</em>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px; border-top: 1px solid #F1F5F9; padding-top: 14px; margin-top: 8px;">
+          <button type="button"
+            data-id="<%= client.id %>"
+            data-company="<%= client.company_name %>"
+            data-contact="<%= client.contact_person %>"
+            data-email="<%= client.email %>"
+            data-phone="<%= client.phone %>"
+            onclick="handleConvertLeadClick(this)"
+            style="flex: 1; padding: 8px 10px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <i data-lucide="plus-circle" style="width: 13px; height: 13px;"></i>
+            <span>Add as Lead</span>
+          </button>
+          <button type="button"
+            data-id="<%= client.id %>"
+            data-company="<%= client.company_name %>"
+            onclick="handleScheduleFollowupClick(this)"
+            style="padding: 8px 12px; background: #fff; color: #000; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            <i data-lucide="phone-call" style="width: 13px; height: 13px;"></i>
+          </button>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <div class="erp-card" style="padding: 48px; text-align: center; background: #fff; border: 1px solid #E2E8F0; border-radius: 12px;">
+    <i data-lucide="building" style="width: 40px; height: 40px; color: #94A3B8; margin: 0 auto 12px auto;"></i>
+    <h3 style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 6px;">No clients found</h3>
+    <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">Try adjusting your search criteria or add a new client to your directory.</p>
+    <button onclick="openAddClientModal()" class="erp-btn erp-btn-sm" style="padding: 8px 16px; background: #000; color: #fff; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;">
+      Add Client Now
+    </button>
+  </div>
+<% } %>
+
+<!-- Modal: Add New Client -->
+<div id="addClientModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Add New Client</h3>
+      <button onclick="closeAddClientModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="addClientForm" onsubmit="handleCreateClient(event)">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Company / Institution Name *</label>
+          <input type="text" name="company_name" required placeholder="e.g. Acme Technologies" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Contact Person *</label>
+          <input type="text" name="contact_person" required placeholder="e.g. Ramesh Kumar" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Phone Number *</label>
+          <input type="tel" name="phone" required placeholder="e.g. 9876543210" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Official Email *</label>
+          <input type="email" name="email" required placeholder="e.g. contact@acme.com" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Industry</label>
+          <select name="industry" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+            <option value="IT & Software">IT & Software</option>
+            <option value="Education & Colleges">Education & Colleges</option>
+            <option value="Healthcare Tech">Healthcare Tech</option>
+            <option value="Financial Services">Financial Services</option>
+            <option value="Manufacturing">Manufacturing</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Location / City</label>
+          <input type="text" name="location" placeholder="e.g. Chennai" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Company Size</label>
+          <select name="company_size" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+            <option value="1-10">1-10 employees</option>
+            <option value="11-50" selected>11-50 employees</option>
+            <option value="51-200">51-200 employees</option>
+            <option value="201-500">201-500 employees</option>
+            <option value="500+">500+ employees</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Status</label>
+          <select name="status" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+            <option value="prospect" selected>Prospect</option>
+            <option value="contacted">Contacted</option>
+            <option value="partner">Partner</option>
+          </select>
+        </div>
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Website URL</label>
+          <input type="url" name="website" placeholder="https://example.com" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Requirements & Notes</label>
+          <textarea name="requirements" rows="2" placeholder="e.g. Looking for batch hiring of 20 interns in React and Node.js..." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button type="button" onclick="closeAddClientModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveClientBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Client</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Convert Client to Lead -->
+<div id="convertLeadModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+  <div style="background: #fff; border-radius: 14px; width: 100%; max-width: 500px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="font-size: 18px; font-weight: 750; color: #000; margin: 0;">Add as Sales / Training Lead</h3>
+      <button onclick="closeConvertLeadModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+
+    <form id="convertLeadForm" onsubmit="handleCreateLead(event)">
+      <input type="hidden" name="client_id" id="leadClientId">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Deal Title *</label>
+          <input type="text" name="title" id="leadTitle" required placeholder="e.g. Full-Stack Training Batch (15 Students)" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Company Name</label>
+            <input type="text" name="company_name" id="leadCompany" required style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Contact Name</label>
+            <input type="text" name="contact_name" id="leadContact" required style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Expected Value (₹)</label>
+            <input type="number" name="deal_value" placeholder="e.g. 75000" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Initial Stage</label>
+            <select name="stage" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="new">New Lead</option>
+              <option value="contacted" selected>Contacted</option>
+              <option value="discussion">In Discussion</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Priority</label>
+            <select name="priority" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="high">High Priority</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Source</label>
+            <select name="source" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; background: #fff;">
+              <option value="inbound">Inbound Client</option>
+              <option value="cold_outreach">Cold Outreach</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="referral">Referral</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Next Follow-up Date</label>
+          <input type="datetime-local" name="next_followup_date" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Notes</label>
+          <textarea name="notes" rows="2" placeholder="Requirements discussed, batch timeline, etc." style="width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+        <button type="button" onclick="closeConvertLeadModal()" style="padding: 8px 16px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="submit" id="saveLeadBtn" style="padding: 8px 18px; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Create Lead</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openAddClientModal() {
+    document.getElementById('addClientModal').style.display = 'flex';
+  }
+  function closeAddClientModal() {
+    document.getElementById('addClientModal').style.display = 'none';
+  }
+
+  function openConvertLeadModal(clientId, company, contact, email, phone) {
+    document.getElementById('leadClientId').value = clientId;
+    document.getElementById('leadCompany').value = company;
+    document.getElementById('leadContact').value = contact;
+    document.getElementById('leadTitle').value = `${company} - Training Batch`;
+    document.getElementById('convertLeadModal').style.display = 'flex';
+  }
+  function closeConvertLeadModal() {
+    document.getElementById('convertLeadModal').style.display = 'none';
+  }
+
+  function handleConvertLeadClick(btn) {
+    if (!btn || !btn.dataset) return;
+    openConvertLeadModal(btn.dataset.id, btn.dataset.company, btn.dataset.contact, btn.dataset.email, btn.dataset.phone);
+  }
+
+  function handleScheduleFollowupClick(btn) {
+    if (!btn || !btn.dataset) return;
+    openScheduleFollowUpModal(btn.dataset.id, btn.dataset.company);
+  }
+
+  function openScheduleFollowUpModal(clientId, company) {
+    window.location.href = `/employee/follow-ups?new=true&client_id=${clientId}`;
+  }
+
+  async function handleCreateClient(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveClientBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/api/employee/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to add client');
+        btn.disabled = false;
+        btn.textContent = 'Save Client';
+      }
+    } catch (err) {
+      alert('Error creating client');
+      btn.disabled = false;
+      btn.textContent = 'Save Client';
+    }
+  }
+
+  async function handleCreateLead(e) {
+    e.preventDefault();
+    const btn = document.getElementById('saveLeadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Creating...';
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/api/employee/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.href = '/employee/leads';
+      } else {
+        alert(result.message || 'Failed to create lead');
+        btn.disabled = false;
+        btn.textContent = 'Create Lead';
+      }
+    } catch (err) {
+      alert('Error creating lead');
+      btn.disabled = false;
+      btn.textContent = 'Create Lead';
+    }
+  }
+</script>
